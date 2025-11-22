@@ -12,7 +12,7 @@ class MetaPrompter():
         if project in PROJECTS and task in TASKS:
             p_name, p_desc, p_lang = (PROJECT_CONTEXTS[project]['name'], 
                                       PROJECT_CONTEXTS[project]['description'],
-                                      PROJECT_CONTEXTS[project]['language'])
+                                      PROJECT_CONTEXTS[project]['languages'])
             
             t_desc, t_cons = (TASK_CONTEXTS[task]['description'], 
                               TASK_CONTEXTS[task]['considerations'])

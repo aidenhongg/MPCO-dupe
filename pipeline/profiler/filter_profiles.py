@@ -1,4 +1,6 @@
 from pathlib import Path
+import xml.etree.ElementTree as ET
+
 import sys
 import subprocess
 import json
@@ -17,49 +19,59 @@ def is_import_line(file_path: str, line_number: int) -> bool:
     except Exception:
         return False
 
-def get_speedscope(proj_name : str):
+def _get_pyprofile(proj_name : str) -> float:
     profiler_dir = Path(__file__).parent
-    
+
+    output_file = profiler_dir / "profiles" / "whisper_profile.speedscope"
+    test_path = profiler_dir / "projects" / "whisper" / "tests"
+    report_file = profiler_dir / "temp" / "report.xml"
     venv_python = profiler_dir / "venv" / "Scripts" / "python.exe"
     
     if not venv_python.exists():
         print(f"Error: Virtual environment not found at {venv_python}")
         sys.exit(1)
     
-    print("Installing whisper in editable mode...")
+    # ensure venv has right whisper path
+    print("Reinitializing whisper at correct path...")
     whisper_path = profiler_dir / "projects" / "whisper"
     install_result = subprocess.run(
         [str(venv_python), "-m", "pip", "install", "-e", str(whisper_path)],
-        cwd=profiler_dir
+        cwd=profiler_dir,
+        capture_output=True
     )
     
     if install_result.returncode != 0:
         print("Failed to install whisper")
         sys.exit(1)
     
-    # Run py-spy with pytest
+    # run py-spy with pytest
     print("Running py-spy profiler...")
-    output_file = profiler_dir / "profiles" / "whisper_profile.speedscope"
-    test_path = profiler_dir / "projects" / "whisper" / "tests"
-    
-    profile_result = subprocess.run(
-        [
-            "py-spy", "record",
-            "-f", "speedscope",
-            "--full-filenames",
-            "-o", str(output_file),
-            "--subprocesses",
-            "--",
-            str(venv_python), "-m", "pytest", str(test_path)
-        ],
-        cwd=profiler_dir
-    )
-    
-    if profile_result.returncode != 0:
+    profile_result = None
+    try:
+        profile_result = subprocess.run(["py-spy", "record",
+                                        "-f", "speedscope",
+                                        "--full-filenames",
+                                        "-o", str(output_file),
+                                        "--subprocesses",
+                                        "--",
+                                        str(venv_python), "-m", "pytest", 
+                                        str(test_path),
+                                        f"--junit-xml={report_file}"], 
+                                        cwd=profiler_dir)
+    except KeyboardInterrupt:
+        print("Tests halted - speedscope saved")
+
+    if profile_result is not None and profile_result.returncode in (3, 4, 5):
         print("Profiling failed")
         sys.exit(1)
     
     print(f"Profiling complete. Output saved to {output_file}")
+    root = ET.parse(report_file).getroot()
+    report = root if root.tag == 'testsuite' else root.find('testsuite')
+    failure_count = int(report.get('failures', 0))
+    duration = float(report.get('time', 0.0))
+    
+    return failure_count, duration
 
 def filter_speedscope(proj_name : str):
     """
@@ -173,4 +185,4 @@ def filter_speedscope(proj_name : str):
     print(f"\nFiltered profile saved to: {output_file}")
     print(f"Remaining frames: {filtered_frame_count}")
     
-    print(f"\n✓ Success: {filtered_frame_count} frames remaining")
+    print(f"\nSuccess: {filtered_frame_count} frames remaining")

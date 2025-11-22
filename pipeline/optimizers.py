@@ -9,6 +9,7 @@ class GeminiOptimizer(GeminiAgent):
     def __init__(self) -> None:
         super().__init__()
         self.generate = self._gemini_gen
+        self.name = "25"
 
     def _gemini_gen(self, prompt : str, snippet : str):
         schema = {"type": "object",
@@ -28,6 +29,7 @@ class OpenOptimizer(OpenAIAgent):
     def __init__(self) -> None:
         super().__init__()
         self.generate = self._openai_gen
+        self.name = "4o"
 
     def _openai_gen(self, prompt : str, snippet : str):
         schema = {"type": "object",
@@ -47,6 +49,7 @@ class AnthroOptimizer(AnthroAgent):
     def __init__(self) -> None:
         super().__init__()        
         self.generate = self._anthropic_gen
+        self.name = "37"
 
     def _anthropic_gen(self, prompt : str, snippet : str):
         code_tool=[{"name": "code_output", 

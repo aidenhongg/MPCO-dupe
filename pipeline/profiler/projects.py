@@ -20,7 +20,7 @@ class PyProj(Project):
         super().__init__(name)
         self.top_functions = _speedscope_bottlenecks(name)
         
-
+# im not entirely sure how this function works so just close it & dont open it
 def _speedscope_bottlenecks(name : str):
     """
     Identify the 10 unique functions with the longest runtimes from a filtered speedscope profile.
@@ -175,7 +175,9 @@ def _speedscope_bottlenecks(name : str):
                                 'file': file_path,
                                 'line': target_line,
                                 'base_indent': base_indent,
-                                'code' : snippet}
+                                'code' : snippet,
+                                'start_line': start_idx,
+                                'end_line': end_idx}
                     
                     top_functions.append(function)
                     if len(top_functions) >= 10:

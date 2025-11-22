@@ -1,4 +1,27 @@
 {
-    "project" : {"name" : "", "description" : "", "languages" : ""},
-    "project2" : {"name" : "", "description" : "", "languages" : ""}
+    "bitmappp": {
+        "name": "BitmapPlusPlus",
+        "description": "Simple and Fast single header Bitmap (BMP) C++ library",
+        "languages": "C++, CMake"
+    },
+    "llama": {
+        "name": "llama.cpp",
+        "description": "LLM inference in C/C++",
+        "languages": "C++, C, Python, Cuda, HTML, Metal, Svelte, TypeScript, Shell, GLSL, Jinja, CMake, WGSL, JavaScript, CSS, Objective-C, Dockerfile, Nix, MDX, Makefile, Batchfile, SCSS"
+    },
+    "rpcs3": {
+        "name": "rpcs3",
+        "description": "PlayStation 3 emulator and debugger",
+        "languages": "C++, C, GLSL, CMake, Shell, Python, Batchfile, Objective-C++, GDB"
+    },
+    "whisper": {
+        "name": "whisper",
+        "description": "Robust Speech Recognition via Large-Scale Weak Supervision",
+        "languages": "Python"
+    },
+    "langflow": {
+        "name": "langflow",
+        "description": "Langflow is a powerful tool for building and deploying AI-powered agents and workflows.",
+        "languages": "Python, TypeScript, JavaScript, CSS, Makefile, Dockerfile, Shell, PowerShell, Batchfile, HTML, Mako"
+    }
 }

@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="0" tests="25" time="11.183" timestamp="2025-11-21T23:09:47.964404-08:00" hostname="aiden"><testcase classname="tests.test_audio" name="test_audio" time="0.006"><failure message="FileNotFoundError: [WinError 2] The system cannot find the file specified">&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_audio.py:10: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+projects\whisper\whisper\audio.py:58: in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;Popen: returncode: None args: ['ffmpeg', '-nostdin', '-threads', '0', '-i',...&gt;
+args = 'ffmpeg -nostdin -threads 0 -i c:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\tests\\jfk.flac -f s16le -ac 1 -acodec pcm_s16le -ar 16000 -'
+executable = None, preexec_fn = None, close_fds = False, pass_fds = (), cwd = None, env = None
+startupinfo = &lt;subprocess.STARTUPINFO object at 0x000002E54ED827B0&gt;, creationflags = 0, shell = False, p2cread = Handle(656), p2cwrite = -1, c2pread = 14
+c2pwrite = Handle(1568), errread = 15, errwrite = Handle(1612), unused_restore_signals = True, unused_gid = None, unused_gids = None, unused_uid = None
+unused_umask = -1, unused_start_new_session = False, unused_process_group = -1
+
+    def _execute_child(self, args, executable, preexec_fn, close_fds,
+                       pass_fds, cwd, env,
+                       startupinfo, creationflags, shell,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite,
+                       unused_restore_signals,
+                       unused_gid, unused_gids, unused_uid,
+                       unused_umask,
+                       unused_start_new_session, unused_process_group):
+        """Execute program (MS Windows version)"""
+    
+        assert not pass_fds, "pass_fds not supported on Windows."
+    
+        if isinstance(args, str):
+            pass
+        elif isinstance(args, bytes):
+            if shell:
+                raise TypeError('bytes args is not allowed on Windows')
+            args = list2cmdline([args])
+        elif isinstance(args, os.PathLike):
+            if shell:
+                raise TypeError('path-like args is not allowed when '
+                                'shell is true')
+            args = list2cmdline([args])
+        else:
+            args = list2cmdline(args)
+    
+        if executable is not None:
+            executable = os.fsdecode(executable)
+    
+        # Process startup details
+        if startupinfo is None:
+            startupinfo = STARTUPINFO()
+        else:
+            # bpo-34044: Copy STARTUPINFO since it is modified above,
+            # so the caller can reuse it multiple times.
+            startupinfo = startupinfo.copy()
+    
+        use_std_handles = -1 not in (p2cread, c2pwrite, errwrite)
+        if use_std_handles:
+            startupinfo.dwFlags |= _winapi.STARTF_USESTDHANDLES
+            startupinfo.hStdInput = p2cread
+            startupinfo.hStdOutput = c2pwrite
+            startupinfo.hStdError = errwrite
+    
+        attribute_list = startupinfo.lpAttributeList
+        have_handle_list = bool(attribute_list and
+                                "handle_list" in attribute_list and
+                                attribute_list["handle_list"])
+    
+        # If we were given an handle_list or need to create one
+        if have_handle_list or (use_std_handles and close_fds):
+            if attribute_list is None:
+                attribute_list = startupinfo.lpAttributeList = {}
+            handle_list = attribute_list["handle_list"] = \
+                list(attribute_list.get("handle_list", []))
+    
+            if use_std_handles:
+                handle_list += [int(p2cread), int(c2pwrite), int(errwrite)]
+    
+            handle_list[:] = self._filter_handle_list(handle_list)
+    
+            if handle_list:
+                if not close_fds:
+                    warnings.warn("startupinfo.lpAttributeList['handle_list'] "
+                                  "overriding close_fds", RuntimeWarning)
+    
+                # When using the handle_list we always request to inherit
+                # handles but the only handles that will be inherited are
+                # the ones in the handle_list
+                close_fds = False
+    
+        if shell:
+            startupinfo.dwFlags |= _winapi.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = _winapi.SW_HIDE
+            if not executable:
+                # gh-101283: without a fully-qualified path, before Windows
+                # checks the system directories, it first looks in the
+                # application directory, and also the current directory if
+                # NeedCurrentDirectoryForExePathW(ExeName) is true, so try
+                # to avoid executing unqualified "cmd.exe".
+                comspec = os.environ.get('ComSpec')
+                if not comspec:
+                    system_root = os.environ.get('SystemRoot', '')
+                    comspec = os.path.join(system_root, 'System32', 'cmd.exe')
+                    if not os.path.isabs(comspec):
+                        raise FileNotFoundError('shell not found: neither %ComSpec% nor %SystemRoot% is set')
+                if os.path.isabs(comspec):
+                    executable = comspec
+            else:
+                comspec = executable
+    
+            args = '{} /c "{}"'.format (comspec, args)
+    
+        if cwd is not None:
+            cwd = os.fsdecode(cwd)
+    
+        sys.audit("subprocess.Popen", executable, args, cwd, env)
+    
+        # Start the process
+        try:
+&gt;           hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                                     # no special security
+                                     None, None,
+                                     int(not close_fds),
+                                     creationflags,
+                                     env,
+                                     cwd,
+                                     startupinfo)
+E                                    FileNotFoundError: [WinError 2] The system cannot find the file specified
+
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: FileNotFoundError</failure></testcase><testcase classname="tests.test_normalizer" name="test_number_normalizer[std0]" time="0.006" /><testcase classname="tests.test_normalizer" name="test_number_normalizer[std1]" time="0.009" /><testcase classname="tests.test_normalizer" name="test_spelling_normalizer" time="0.001" /><testcase classname="tests.test_normalizer" name="test_text_normalizer" time="0.003" /><testcase classname="tests.test_timing" name="test_dtw[10-20]" time="1.874" /><testcase classname="tests.test_timing" name="test_dtw[32-16]" time="0.001" /><testcase classname="tests.test_timing" name="test_dtw[123-1500]" time="0.009" /><testcase classname="tests.test_timing" name="test_dtw[234-189]" time="0.004" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[10-20]" time="0.002"><failure message="AssertionError: Torch not compiled with CUDA enabled">N = 10, M = 20
+
+&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_timing.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+&gt;               raise AssertionError("Torch not compiled with CUDA enabled")
+E               AssertionError: Torch not compiled with CUDA enabled
+
+venv\Lib\site-packages\torch\cuda\__init__.py:403: AssertionError</failure></testcase><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[32-16]" time="0.002"><failure message="AssertionError: Torch not compiled with CUDA enabled">N = 32, M = 16
+
+&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_timing.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+&gt;               raise AssertionError("Torch not compiled with CUDA enabled")
+E               AssertionError: Torch not compiled with CUDA enabled
+
+venv\Lib\site-packages\torch\cuda\__init__.py:403: AssertionError</failure></testcase><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[123-1500]" time="0.009"><failure message="AssertionError: Torch not compiled with CUDA enabled">N = 123, M = 1500
+
+&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_timing.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+&gt;               raise AssertionError("Torch not compiled with CUDA enabled")
+E               AssertionError: Torch not compiled with CUDA enabled
+
+venv\Lib\site-packages\torch\cuda\__init__.py:403: AssertionError</failure></testcase><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[234-189]" time="0.002"><failure message="AssertionError: Torch not compiled with CUDA enabled">N = 234, M = 189
+
+&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_timing.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+&gt;               raise AssertionError("Torch not compiled with CUDA enabled")
+E               AssertionError: Torch not compiled with CUDA enabled
+
+venv\Lib\site-packages\torch\cuda\__init__.py:403: AssertionError</failure></testcase><testcase classname="tests.test_timing" name="test_median_filter[shape0]" time="0.004" /><testcase classname="tests.test_timing" name="test_median_filter[shape1]" time="0.002" /><testcase classname="tests.test_timing" name="test_median_filter[shape2]" time="0.012" /><testcase classname="tests.test_timing" name="test_median_filter[shape3]" time="5.340" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape0]" time="0.001"><failure message="AssertionError: Torch not compiled with CUDA enabled">shape = (10,)
+
+&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_timing.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+&gt;               raise AssertionError("Torch not compiled with CUDA enabled")
+E               AssertionError: Torch not compiled with CUDA enabled
+
+venv\Lib\site-packages\torch\cuda\__init__.py:403: AssertionError</failure></testcase><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape1]" time="0.001"><failure message="AssertionError: Torch not compiled with CUDA enabled">shape = (1, 15)
+
+&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_timing.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+&gt;               raise AssertionError("Torch not compiled with CUDA enabled")
+E               AssertionError: Torch not compiled with CUDA enabled
+
+venv\Lib\site-packages\torch\cuda\__init__.py:403: AssertionError</failure></testcase><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape2]" time="0.002"><failure message="AssertionError: Torch not compiled with CUDA enabled">shape = (4, 5, 345)
+
+&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_timing.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+&gt;               raise AssertionError("Torch not compiled with CUDA enabled")
+E               AssertionError: Torch not compiled with CUDA enabled
+
+venv\Lib\site-packages\torch\cuda\__init__.py:403: AssertionError</failure></testcase><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape3]" time="0.195"><failure message="AssertionError: Torch not compiled with CUDA enabled">shape = (6, 12, 240, 512)
+
+&gt;   ???
+
+C:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\mpco-pipeline\profiler\projects\whisper\tests\test_timing.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+&gt;               raise AssertionError("Torch not compiled with CUDA enabled")
+E               AssertionError: Torch not compiled with CUDA enabled
+
+venv\Lib\site-packages\torch\cuda\__init__.py:403: AssertionError</failure></testcase><testcase classname="tests.test_tokenizer" name="test_tokenizer[True]" time="0.128" /><testcase classname="tests.test_tokenizer" name="test_tokenizer[False]" time="0.001" /><testcase classname="tests.test_tokenizer" name="test_multilingual_tokenizer" time="0.321" /><testcase classname="tests.test_tokenizer" name="test_split_on_unicode" time="0.001" /></testsuite></testsuites>
