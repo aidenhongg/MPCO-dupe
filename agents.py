@@ -17,4 +17,4 @@ class AnthroAgent():
     def __init__(self) -> None:
         from anthropic import Anthropic
         self.client = Anthropic(api_key=ANTHROPIC_KEY)
-        self.model_name = "27"
+        self.model_name = "40"

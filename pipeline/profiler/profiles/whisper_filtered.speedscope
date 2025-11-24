@@ -3,572 +3,540 @@
   "profiles": [
     {
       "type": "sampled",
-      "name": "Process 8588 Thread 8116 \"MainThread\"",
+      "name": "Process 19816 Thread 20344 \"MainThread\"",
       "unit": "seconds",
       "startValue": 0.0,
-      "endValue": 13.05,
+      "endValue": 11.01,
       "samples": [
         [
-          1,
           0
         ],
         [
-          3,
+          1
+        ],
+        [
           2
         ],
         [
-          5,
-          4
+          2
         ],
         [
-          6
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          1
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
         ],
         [
-          7
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
         ],
         [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          6,
+          5
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
           7
         ],
         [
+          4,
           7
         ],
         [
+          4,
           7
         ],
         [
+          4,
           7
         ],
         [
+          4,
           7
+        ],
+        [
+          4,
+          6,
+          5
+        ],
+        [
+          4,
+          6,
+          5
+        ],
+        [
+          4,
+          3
         ],
         [
+          4,
           7
         ],
         [
+          4,
           7
         ],
         [
+          4,
           7
         ],
         [
-          9,
           8
         ],
         [
-          9,
           8
         ],
         [
-          9,
           8
         ],
         [
-          9,
           8
         ],
         [
-          9,
           8
         ],
         [
-          9,
           8
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          8
-        ],
-        [
-          9,
-          11
-        ],
-        [
-          9,
-          11,
-          12
-        ],
-        [
-          9,
-          8
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          9,
-          10
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
-        ],
-        [
-          13
         ]
       ],
       "weights": [
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
         0.01,
         0.01,
         0.01,
@@ -745,39 +713,9 @@
   "shared": {
     "frames": [
       {
-        "name": "Whisper",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 295,
-        "col": null
-      },
-      {
-        "name": "<module>",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 252,
-        "col": null
-      },
-      {
-        "name": "preprocess",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
-        "line": 406,
-        "col": null
-      },
-      {
         "name": "__call__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
-        "line": 443,
-        "col": null
-      },
-      {
-        "name": "remove_symbols_and_diacritics",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\basic.py",
-        "line": 32,
-        "col": null
-      },
-      {
-        "name": "__call__",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
-        "line": 539,
+        "line": 535,
         "col": null
       },
       {
@@ -805,21 +743,21 @@
         "col": null
       },
       {
-        "name": "get_encoding",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 357,
-        "col": null
-      },
-      {
-        "name": "get_encoding",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 335,
-        "col": null
-      },
-      {
         "name": "<genexpr>",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
         "line": 335,
+        "col": null
+      },
+      {
+        "name": "get_encoding",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
+        "line": 335,
+        "col": null
+      },
+      {
+        "name": "get_encoding",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
+        "line": 357,
         "col": null
       },
       {

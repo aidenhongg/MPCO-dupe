@@ -4,8 +4,8 @@ from textwrap3 import dedent
 # Projects, tasks, and models allowed
 PROJECTS : set = {'langflow', 'whisper'}
 TASKS : set = {'runtime'}
-MODELS : set = {'25', '4o', '47'}
-MAX_TOKENS : int = 512
+MODELS : set = {'25', '4o', '40'}
+MAX_TOKENS : int = 4096
 
 def load_json(path, key = None):
     with open(path, mode='r', encoding="utf-8") as handle:

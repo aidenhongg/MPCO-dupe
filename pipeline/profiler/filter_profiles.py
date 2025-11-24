@@ -19,7 +19,8 @@ def is_import_line(file_path: str, line_number: int) -> bool:
     except Exception:
         return False
 
-def _get_pyprofile(proj_name : str) -> float:
+# fixing venv should be refactored into different func
+def get_pyprofile(proj_name : str, testing_patch = False) -> float:
     profiler_dir = Path(__file__).parent
 
     output_file = profiler_dir / "profiles" / "whisper_profile.speedscope"
@@ -48,31 +49,41 @@ def _get_pyprofile(proj_name : str) -> float:
     print("Running py-spy profiler...")
     profile_result = None
     try:
-        profile_result = subprocess.run(["py-spy", "record",
-                                        "-f", "speedscope",
-                                        "--full-filenames",
-                                        "-o", str(output_file),
-                                        "--subprocesses",
-                                        "--",
-                                        str(venv_python), "-m", "pytest", 
-                                        str(test_path),
-                                        f"--junit-xml={report_file}"], 
-                                        cwd=profiler_dir)
+        if not testing_patch:
+            profile_result = subprocess.run(["py-spy", "record",
+                                            "-f", "speedscope",
+                                            "--full-filenames",
+                                            "-o", str(output_file),
+                                            "--subprocesses",
+                                            "--",
+                                            str(venv_python), "-m", "pytest", 
+                                            str(test_path),
+                                            f"--junit-xml={report_file}"], 
+                                            cwd=profiler_dir)
+        else:
+            profile_result = subprocess.run([str(venv_python), "-m", 
+                                             "pytest", str(test_path),
+                                             f"--junit-xml={report_file}"], 
+                                             cwd=profiler_dir)
+
     except KeyboardInterrupt:
         print("Tests halted - speedscope saved")
-
-    if profile_result is not None and profile_result.returncode in (3, 4, 5):
-        print("Profiling failed")
-        sys.exit(1)
     
     print(f"Profiling complete. Output saved to {output_file}")
     root = ET.parse(report_file).getroot()
     report = root if root.tag == 'testsuite' else root.find('testsuite')
+
+    errors = int(report.get('errors', 0))
+    if errors > 0:
+        print(f"Error: Test suite encountered {errors} errors")
+        return None, None
+    
     failure_count = int(report.get('failures', 0))
     duration = float(report.get('time', 0.0))
     
     return failure_count, duration
 
+# probably merge into get_pyprofile
 def filter_speedscope(proj_name : str):
     """
     Filter speedscope profile to keep only functions from a given project.
@@ -84,10 +95,7 @@ def filter_speedscope(proj_name : str):
     project_path = profiler_dir / "projects" / proj_name
     
     project_abs = str(project_path.resolve()).replace('\\', '/')
-    
-    print(f"Loading profile from: {input_file}")
-    print(f"Project path: {project_abs}")
-    
+        
     # Load the speedscope file
     with open(input_file, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -99,10 +107,7 @@ def filter_speedscope(proj_name : str):
         return
     
     original_frames = shared['frames']
-    original_frame_count = len(original_frames)
-    
-    print(f"Original frame count: {original_frame_count}")
-    
+        
     # Filter frames
     filtered_frames = []
     frame_index_map = {}  # Map old index to new index
@@ -141,10 +146,7 @@ def filter_speedscope(proj_name : str):
         elif not frame_file_normalized and (proj_name in frame_name.lower()):
             frame_index_map[idx] = len(filtered_frames)
             filtered_frames.append(frame)
-    
-    filtered_frame_count = len(filtered_frames)
-    print(f"Filtered frame count: {filtered_frame_count}")
-    
+        
     # Update the shared frames
     data['shared']['frames'] = filtered_frames
     
@@ -174,15 +176,8 @@ def filter_speedscope(proj_name : str):
             profile['samples'] = new_samples
             if original_weights:
                 profile['weights'] = new_weights
-                print(f"Updated {len(new_samples)} samples and {len(new_weights)} weights in profile")
-            else:
-                print(f"Updated {len(new_samples)} samples in profile")
     
     # Save the filtered profile
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
     
-    print(f"\nFiltered profile saved to: {output_file}")
-    print(f"Remaining frames: {filtered_frame_count}")
-    
-    print(f"\nSuccess: {filtered_frame_count} frames remaining")

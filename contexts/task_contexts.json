@@ -1,3 +1,3 @@
 {
-    "runtime" : {"description" : "Optimize runtime performance", "considerations" : "Algorithmic complexity and big O notation; data structures and their efficiency; loop optimizations and redundant iterations; memory access patterns and cache utilization; I/O operations and system calls; parallel processing and multi-threading; redundant computations"}
+    "runtime" : {"description" : "Synthesize a single, best-runtime optimization of the object, preserving its signature.", "considerations" : "Algorithmic complexity and big O notation; data structures and their efficiency; loop optimizations and redundant iterations; memory access patterns and cache utilization; I/O operations and system calls; parallel processing and multi-threading; redundant computations"}
 }
