@@ -3,3 +3,5 @@ API_KEYS.json
 
 __pycache__/
 *.py[cod]
+**/venv/
+pipeline/profiler/projects/

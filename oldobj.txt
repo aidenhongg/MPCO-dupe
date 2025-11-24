@@ -1,2 +1,0 @@
-    def encode(self, text, **kwargs):
-        return self.encoding.encode(text, **kwargs)
