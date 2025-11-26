@@ -19,16 +19,19 @@ class Teer:
         self.log.close()
 
 def main():
-    teer, old_stdout  = Teer("test_logs.txt"), sys.stdout
+    teer, old_stdout  = Teer("/results/test_logs.txt"), sys.stdout
     sys.stdout = teer
 
     try:
+        dataset_file = "/results/test_results.csv"
         tester = optimize_projects()
 
         while True:
             try:
                 test_results = next(tester)
-                pd.DataFrame(test_results).to_csv("test_results.csv", mode='a', header=not pd.io.common.file_exists("test_results.csv"), index=False)
+                pd.DataFrame(test_results).to_csv(dataset_file, mode='a', 
+                                                  header=not pd.io.common.file_exists(dataset_file), 
+                                                  index=False)
 
             except StopIteration:
                 break

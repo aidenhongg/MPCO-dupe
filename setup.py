@@ -58,14 +58,8 @@ def main():
     with open('GH_REPOS.json', 'r') as f:
         links = json.load(f)
 
-    choice = input("Regenerate project repos, contexts, or both? (r/c/b): ")
-    if choice.lower() == 'r':
-        regenerate_repos(links)
-    elif choice.lower() == 'c':
-        regenerate_contexts(links)
-    elif choice.lower() == 'b':
-        regenerate_repos(links)
-        regenerate_contexts(links)
+    regenerate_repos(links)
+    regenerate_contexts(links)
 
 if __name__ == "__main__":
     main()

@@ -9,7 +9,7 @@ import pandas as pd
 import traceback
 
 #testing
-PROJECTS = {'whisper'}
+PROJECTS = {'langflow', 'whisper'}
 
 class OptimizationError(Exception):
     def __init__(self, code_object, optimizer_name, attempts=10):

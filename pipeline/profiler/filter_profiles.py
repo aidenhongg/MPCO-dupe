@@ -4,9 +4,16 @@ import xml.etree.ElementTree as ET
 import sys
 import subprocess
 import json
+import platform
+
 
 PROFILER_DIR = Path(__file__).parent
-VENV_PYTHON = PROFILER_DIR / "venv" / "Scripts" / "python.exe"
+
+if platform.system() == "Windows":
+    VENV_PYTHON = PROFILER_DIR / "venv" / "Scripts" / "python.exe"
+else:
+    VENV_PYTHON = PROFILER_DIR / "venv" / "bin" / "python"
+
 
 def fix_venv(proj_name : str):
     if not VENV_PYTHON.exists():
