@@ -27,6 +27,9 @@ Graphs in `graphs/`
 
 Currently only the `Whisper` project is testable. Remaining projects (`langflow`, `Bitmap++`, `RPCS3`, `llama.cpp`) TBA
 
+- Average % Optimization : <img src="https://latex.codecogs.com/svg.image?\frac{Runtime_{original}-Runtime_{optimized}}{Runtime_{original}}*100%" width="250"> - averaged across 10 benchmarking trials
+
+
 - Failed Attempts : # of times a model regenerated a revision after outputting faulty code (code that caused more tests to fail than the unrevised baseline)
 
 <p align="center">
@@ -43,7 +46,10 @@ Currently only the `Whisper` project is testable. Remaining projects (`langflow`
 
 ## Assumptions & Constraints
 
-TurinTech's ARTEMIS was substituted for model calls to public APIs. Claude Sonnet 3.7 was substituted for Sonnet 4.0.
+- The developers' provided test suites & their runtimes were used to benchmark repositories, both optimized or unoptimized.
+- The only evaluated metric in the original MPCO paper was runtime, so decreasing runtime was the primary (and singular) task.
+- TurinTech's ARTEMIS was substituted for model calls to public APIs. 
+- Claude Sonnet 3.7 was substituted for Sonnet 4.0.
 
 `'37' -> '40'`
 
