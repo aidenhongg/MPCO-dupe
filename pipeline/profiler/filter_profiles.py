@@ -5,6 +5,9 @@ import sys
 import subprocess
 import json
 
+PROFILER_DIR = Path(__file__).parent
+VENV_PYTHON = PROFILER_DIR / "venv" / "Scripts" / "python.exe"
+
 def is_import_line(file_path: str, line_number: int) -> bool:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -19,52 +22,45 @@ def is_import_line(file_path: str, line_number: int) -> bool:
     except Exception:
         return False
 
-# fixing venv should be refactored into different func
-def get_pyprofile(proj_name : str, testing_patch = False) -> float:
-    profiler_dir = Path(__file__).parent
-
-    output_file = profiler_dir / "profiles" / "whisper_profile.speedscope"
-    test_path = profiler_dir / "projects" / "whisper" / "tests"
-    report_file = profiler_dir / "temp" / "report.xml"
-    venv_python = profiler_dir / "venv" / "Scripts" / "python.exe"
-    
-    if not venv_python.exists():
-        print(f"Error: Virtual environment not found at {venv_python}")
+def fix_venv(proj_name : str):
+    if not VENV_PYTHON.exists():
+        print(f"Error: Virtual environment not found at {VENV_PYTHON}")
         sys.exit(1)
-    
-    # ensure venv has right whisper path
+
     print("Reinitializing whisper at correct path...")
-    whisper_path = profiler_dir / "projects" / "whisper"
+    whisper_path = PROFILER_DIR / "projects" / "whisper"
+
     install_result = subprocess.run(
-        [str(venv_python), "-m", "pip", "install", "-e", str(whisper_path)],
-        cwd=profiler_dir,
-        capture_output=True
-    )
+        [str(VENV_PYTHON), "-m", "pip", "install", "-e", str(whisper_path)],
+        cwd=PROFILER_DIR,
+        capture_output=True)
     
     if install_result.returncode != 0:
         print("Failed to install whisper")
         sys.exit(1)
+
+
+# fixing venv should be refactored into different func
+def get_pyprofile(proj_name : str, revision_no = 0, testing_patch = False) -> float:
+    output_file = PROFILER_DIR / "profiles" / f"whisper_profile{revision_no}.speedscope"
+
+    test_path = PROFILER_DIR / "projects" / "whisper" / "tests"
+    report_file = PROFILER_DIR / "temp" / "report.xml"
     
     # run py-spy with pytest
     print("Running py-spy profiler...")
-    profile_result = None
     try:
-        if not testing_patch:
-            profile_result = subprocess.run(["py-spy", "record",
-                                            "-f", "speedscope",
-                                            "--full-filenames",
-                                            "-o", str(output_file),
-                                            "--subprocesses",
-                                            "--",
-                                            str(venv_python), "-m", "pytest", 
-                                            str(test_path),
-                                            f"--junit-xml={report_file}"], 
-                                            cwd=profiler_dir)
-        else:
-            profile_result = subprocess.run([str(venv_python), "-m", 
-                                             "pytest", str(test_path),
-                                             f"--junit-xml={report_file}"], 
-                                             cwd=profiler_dir)
+        subprocess.run(["py-spy", "record",
+                        "-f", "speedscope",
+                        "--full-filenames",
+                        "-o", str(output_file),
+                        "--subprocesses",
+                        "--",
+                        str(VENV_PYTHON), "-m", "pytest", 
+                        str(test_path), "--tb=no", 
+                        f"--junit-xml={report_file}"],
+                        capture_output=testing_patch,
+                        cwd=PROFILER_DIR)
 
     except KeyboardInterrupt:
         print("Tests halted - speedscope saved")
@@ -81,17 +77,20 @@ def get_pyprofile(proj_name : str, testing_patch = False) -> float:
     failure_count = int(report.get('failures', 0))
     duration = float(report.get('time', 0.0))
     
+    # finally generate filtered speedscope
+    _filter_speedscope(proj_name, revision_no)
+
     return failure_count, duration
 
 # probably merge into get_pyprofile
-def filter_speedscope(proj_name : str):
+def _filter_speedscope(proj_name : str, revision_no = 0):
     """
     Filter speedscope profile to keep only functions from a given project.
     Removes external library calls and import statements.
     """
     profiler_dir = Path(__file__).parent
-    input_file = profiler_dir / "profiles" / f"{proj_name}_profile.speedscope"
-    output_file = profiler_dir / "profiles" / f"{proj_name}_filtered.speedscope"
+    input_file = profiler_dir / "profiles" / f"{proj_name}_profile{revision_no}.speedscope"
+    output_file = profiler_dir / "profiles" / f"{proj_name}_filtered{revision_no}.speedscope"
     project_path = profiler_dir / "projects" / proj_name
     
     project_abs = str(project_path.resolve()).replace('\\', '/')

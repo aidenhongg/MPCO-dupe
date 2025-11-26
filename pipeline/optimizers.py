@@ -32,16 +32,21 @@ class OpenOptimizer(OpenAIAgent):
         self.name = "4o"
 
     def _openai_gen(self, prompt : str, snippet : str, scope : str):
-        schema = {"type": "object",
-                  "properties": {"code": {"type": "string"}}, 
-                  "required": ["code"]}
+        schema = {
+            "type": "object",
+            "properties": {"code": {"type": "string"}}, 
+            "required": ["code"],
+            "additionalProperties": False
+        }
 
         completion = self.client.chat.completions.create(
             model="gpt-4o", 
             max_tokens=MAX_TOKENS,
-            response_format={"type": "json_schema", "schema": schema},
-            messages=[{"role": "user", "content": 
-                       assemble_prompt(prompt, snippet, scope)}])
+            response_format={"type": "json_schema", "json_schema": {"name": "code_response", "schema": schema, "strict": True}},
+            messages=[
+                {"role": "system", "content": "Return ONLY the optimized code in the 'code' field. Include only executable code in this field, and exclude any comments, explanations, markdown formatting, or additional text."},
+                {"role": "user", "content": assemble_prompt(prompt, snippet, scope)}
+            ])
         
         return json.loads(completion.choices[0].message.content)["code"]
 
@@ -65,8 +70,12 @@ class AnthroOptimizer(AnthroAgent):
             tools=[code_tool],
             tool_choice={"type": "tool", "name": "code_output"})
 
-        return response.content[0].input["code"]
+        for block in response.content:
+            if block.type == "tool_use" and block.name == "code_output":
+                return block.input["code"]
+    
+        raise ValueError("No code_output tool use found in response")
     
 def assemble_prompt(prompt : str, snippet : str, scope : str) -> str:
-    return f"{prompt}\n\nHere is the code:\n\n{snippet}\n\nIn scope:\n\n{scope}"
+    return f"{prompt}\n\nObject to be optimized:\n\n{snippet}\n\nEnclosing scope of object:\n\n{scope}"
 

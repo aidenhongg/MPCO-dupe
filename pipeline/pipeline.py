@@ -1,6 +1,7 @@
-from constants import PROJECTS, MODELS, TASKS
+from constants import *
+import pandas as pd
 
-from pipeline.metaprompters import OpenMP
+from pipeline.metaprompters import OpenMP, MetaPrompter
 from pipeline.optimizers import *
 
 from pipeline.profiler import *
@@ -10,6 +11,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import os
+import traceback
 
 #testing
 PROJECTS = {'whisper'}
@@ -80,7 +82,7 @@ class MyPatch:
             patch_file.write(self.patch)
             patch_path = patch_file.name
 
-        result = subprocess.run(['git', 'apply', patch_path], 
+        result = subprocess.run(['git', 'apply', '--allow-empty', patch_path], 
                               capture_output=True, 
                               text=True,
                               cwd=self.root)
@@ -93,81 +95,186 @@ class MyPatch:
         return True
     
     def _revert_patch(self):
-        subprocess.run(['git', 'apply', '--reverse', self.patch_path],
-                     capture_output=True,
-                     cwd=self.root)
+        reversion = subprocess.run(['git', 'apply', '--allow-empty', '--reverse', self.patch_path],
+                                    capture_output=True,
+                                    cwd=self.root)
+        if reversion.returncode != 0:
+            print(f"Failed to revert patch: {reversion.stderr}")
+            raise Exception("Failed to revert patch")
+
         try:
             os.unlink(self.patch_path)
         except:
             pass
 
 def optimize_projects(objective : str):
+    master_table = pd.DataFrame(columns=['original_snippet', 'edited_snippet', 
+                                         'project', 'optimizer', 'prompt', 'prompt_type', 
+                                         'failed_attempts', 'avg_runtime'])
     mpo4 = OpenMP()
-    optims = (AnthroOptimizer(), OpenOptimizer(), GeminiOptimizer())
-
+    optims = (GeminiOptimizer(),)
+    # add back AnthroOptimizer(), to optims
     for proj_name in list(PROJECTS):
         # split this for python / cpp
         # pick out bottlenecks
-        og_failure_count, duration = get_pyprofile(proj_name)
-        if not og_failure_count:
+        fix_venv(proj_name) # possible refactor into main in root
+        
+        og_failure_count, duration = get_pyprofile(proj_name, 0)
+        if og_failure_count is None:
             print(f"Test suite on {proj_name} errors - skipping")
             continue
-        print(f"Project: {proj_name}, Failure Count: {og_failure_count}, Duration: {duration}")
-        filter_speedscope(proj_name)
+
+        # print(f"Project: {proj_name}, Failure Count: {og_failure_count}, Duration: {duration}")
         project = PyProj(proj_name)
 
         # generate snippets for each revision model
         task = list(TASKS)[0]
+        
         for optim in optims:
-            runtimes = []
-            patches = []
-            try:
-                while True:
-                    mp_prompt = mpo4.get_prompt(objective, proj_name, task, optim.name)
-                    print(mp_prompt) # remove -just for testing!
+            # generate necessary prompts
+            meta_prompt = mpo4.get_prompt(objective, proj_name, task, optim.name)
+            base_contextual_prompt = _base_template(objective, proj_name, task, optim.name)
+            for prompt, metaprompter, prompt_type in ((meta_prompt, mpo4, 'MP'),
+                                                    (FEW_SHOT, None, 'FS'),
+                                                    (COT, None, 'COT'),
+                                                    (base_contextual_prompt, None, 'BASE')):
+                runtimes = []
+                patches = []
+                
+                all_snippets = []       
+                all_attempts = []
+                try:
+                    while True: # optimization loop given params (project, prompt, optimizer model)
+                        for _ in range(10):
+                            try:
+                                edits, failed_optims, prompt = _optimize_snippet(objective, task, 
+                                                                                project, optim, prompt, 
+                                                                                patches, og_failure_count, 
+                                                                                metaprompter = metaprompter)
+                            except (OptimizationError, ValueError, KeyError) as e: # if theres an error show it
+                                project.revisions += 1
+                                traceback.print_exc()
+                                print(type(e).__name__)
+                                print(f"Error optimizing {proj_name} with {optim.name}: {e}")
 
-                    for i, code_object in enumerate(project.top_functions):
-                        snippet = code_object['code']
-                        scope = code_object['scope']
+                            all_snippets.append(edits)
+                            all_attempts.append(failed_optims)
 
-                        for failed_optims in range(10):
-                            optimized_code = optim.generate(mp_prompt, snippet, scope)
-                            patch = MyPatch(code_object, optimized_code, project.root_dir)
+                        if project.revisions == 0:
+                            print(f"No successful optimizations - moving to next prompt type")
+                            break
+                        print("Optimizations generated - benchmarking...")
 
-                            if patch._apply_patch():
-                                patches.append(patch)
-                                # run tests to get runtimes in this scope
-                                new_failure_count, _ = get_pyprofile(proj_name, testing_patch=True)
-                                if not new_failure_count or new_failure_count > og_failure_count:
+                        # now we have ~10 patches - run tests on current revision (10th)
+                        new_failure_count, duration = get_pyprofile(proj_name, 'bench')
 
-                                    print(code_object['rel_path'], code_object['start_line'], code_object['end_line'])
-                                    print(code_object['code']) # testing - may have to remove later
+                        # if the last revision is worse, revert all patches and try again
+                        if new_failure_count > og_failure_count:
+                            [patch._revert_patch() for patch in patches]
+                            continue
+                        
+                        # if the last revision is successful, keep testing and then breka
+                        else:
+                            runtimes.append(duration)
+                            for _ in range(9):
+                                _, duration = get_pyprofile(proj_name, 'bench')
+                                runtimes.append(duration)
+                            break
+                except BaseException as e:
+                    print(f"Error during optimization loop: {e}")
+                    traceback.print_exc()
+                finally:
+                    print(f"Done with {prompt_type} - moving to next prompt type...")
+                    _assemble_results(master_table, all_snippets, 
+                                      proj_name, optim.name, 
+                                      prompt, prompt_type, 
+                                      all_attempts, runtimes) # record results
 
-                                    patch._revert_patch()
-                                    patches = patches[:-1]
+                    [patch._revert_patch() for patch in patches] # always revert all patches at the end
+                    project.revisions = 0 # reset revisions for next set of revisions
+                    
+            print(f"Done with {optim.name} - moving to next optimizer...")
 
-                                else:
+    return master_table
 
-                                    break
-                                
-                            print(f"{failed_optims + 1} failed optimizations : regenerating attempt...")
-                            if failed_optims == 9:
-                                raise OptimizationError(code_object, optim.name)
+                    
+                    
 
-                            if i == 0: # regenerate prompt if it fails on very first trial
-                                print("Regenerating prompt...")
-                                mp_prompt = mpo4.get_prompt(objective, proj_name, task, optim.name) 
+def _optimize_snippet(objective : str, task : str, 
+                      project : PyProj, optim : AnthroOptimizer | OpenOptimizer | GeminiOptimizer, 
+                      prompt : str, patches : list, 
+                      og_failure_count : list, metaprompter : MetaPrompter = None):
+    
+    proj_name = project.name
 
-                    break
-            except Exception:
-                [patch._revert_patch() for patch in patches]
-                # atp all patches generated
-                new_failure_count, duration = get_pyprofile(proj_name, testing_patch=True)
-                if new_failure_count > og_failure_count:
-                    continue
+    code_object = project.load_function()
+    old_snippet = code_object['code']
+    scope = code_object['scope']
 
-                else:
-                    runtimes.append(duration)
+    for failed_optims in range(10):
+        try: 
+            new_snippet = optim.generate(prompt, old_snippet, scope)
+        except (ValueError, KeyError) as e:
+            print(f"Error generating code: {e}")
+            print("Trying one more time...")
+            new_snippet = optim.generate(prompt, old_snippet, scope)
 
-                for patch in patches:
-                    patch._revert_patch()
+        patch = MyPatch(code_object, new_snippet, project.root_dir)
+        if patch._apply_patch():
+            # run tests to get runtimes in this scope
+            new_failure_count, _ = get_pyprofile(proj_name, project.revisions + 1, testing_patch = True)
+            if not new_failure_count or new_failure_count > og_failure_count:
+                print(code_object['rel_path'], code_object['start_line'], code_object['end_line'])
+                print(code_object['code']) # testing - may have to remove later
+                
+                patch._revert_patch()
+                print(f"{failed_optims + 1} failed optimizations : regenerating attempt...")
+                
+                if failed_optims == 9:
+                    raise OptimizationError(code_object, optim.name)
+                if project.revisions == 0 and metaprompter:
+                    print("Regenerating prompt...")
+                    prompt = metaprompter.get_prompt(objective, proj_name, task, optim.name) 
+            
+            else:
+                patches.insert(0, patch)
+                project.revisions += 1
+                return {old_snippet : new_snippet}, failed_optims, prompt
+        else:
+            patch._revert_patch()
+
+def _base_template(objective, proj_name, task, optim_name):
+    p_name, p_desc, p_lang = (PROJECT_CONTEXTS[proj_name]['name'], 
+                                PROJECT_CONTEXTS[proj_name]['description'],
+                                PROJECT_CONTEXTS[proj_name]['languages'])
+    
+    t_desc, t_cons = (TASK_CONTEXTS[task]['description'], 
+                      TASK_CONTEXTS[task]['considerations'])
+
+    llm_name, llm_cons = (MODEL_CONTEXTS[optim_name]['name'], 
+                      MODEL_CONTEXTS[optim_name]['considerations'])
+
+    return BASE_TEMPLATE(objective, p_name, p_desc, p_lang, 
+                         t_desc, t_cons,
+                         llm_name, llm_cons)
+
+def _assemble_results(master_table : pd.DataFrame, all_snippets : list, 
+                      proj_name : str, optim_name : str, 
+                      prompt : str, prompt_type : str, 
+                      all_attempts : list, runtimes : list) -> list:
+
+    avg_runtime = sum(runtimes) / len(runtimes) if runtimes else 0
+    
+    for (snippet_dict, attempts) in zip(all_snippets, all_attempts):
+        for original, edited in snippet_dict.items():
+            row = pd.Series({
+                'original_snippet': original,
+                'edited_snippet': edited,
+                'project': proj_name,
+                'optimizer': optim_name,
+                'prompt': prompt,
+                'prompt_type': prompt_type,
+                'failed_attempts': attempts,
+                'avg_runtime': avg_runtime
+            })
+            master_table.loc[len(master_table)] = row

@@ -5,7 +5,9 @@ from textwrap3 import dedent
 PROJECTS : set = {'langflow', 'whisper'}
 TASKS : set = {'runtime'}
 MODELS : set = {'25', '4o', '40'}
-MAX_TOKENS : int = 4096
+
+MAX_TOKENS : int = 16384 
+# this needs to be super long just for gemini for some reason but ig better to have really long and avoid errors than not
 
 def load_json(path, key = None):
     with open(path, mode='r', encoding="utf-8") as handle:

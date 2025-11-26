@@ -3,7 +3,7 @@ from pathlib import Path
 import ast
 from ast import FunctionDef, AsyncFunctionDef, ClassDef
 import json
-
+ 
 class InvalidTask(Exception):
     pass
 
@@ -12,6 +12,8 @@ class Project:
         self.name = name
         self.optimized = []
         self.root_dir = Path(__file__).parent / "projects" / name
+        self.revisions = 0
+
         if name not in PROJECTS:
             raise InvalidTask(f"Invalid project passed! Must be in {PROJECTS}")
         
@@ -21,12 +23,16 @@ class Project:
 class PyProj(Project):
     def __init__(self, name: str):
         super().__init__(name)
-        self.top_functions = _speedscope_bottlenecks(name, self.root_dir)
+        self.top_bottlenecks = _speedscope_bottlenecks(self.name, self.root_dir) # should return list of nodes
+
+    def load_function(self): # rename to load bottleneck
+        current_node = self.top_bottlenecks[self.revisions]
+        return _node_to_obj(current_node, self.root_dir)
         
-def _speedscope_bottlenecks(name : str, root_dir):
+def _speedscope_bottlenecks(name : str, root_dir : str):
     # Define paths
     profiler_dir = Path(__file__).parent
-    filtered_file = profiler_dir / "profiles" / f"{name}_filtered.speedscope"
+    filtered_file = profiler_dir / "profiles" / f"{name}_filtered{0}.speedscope"
     if not filtered_file.exists():
         raise FileNotFoundError(f"Filtered profile not found: {filtered_file}")
     print(f"Loading filtered profile from: {filtered_file}")
@@ -65,9 +71,11 @@ def _speedscope_bottlenecks(name : str, root_dir):
     
     # sort frames by total time (descending)
     sorted_frames = sorted(frame_times.items(), key=lambda x: x[1], reverse=True)
-    top_functions = []
     seen_names = set()
+    seen_nodes = set()
     
+    top_nodes = []
+
     for frame_idx, _ in sorted_frames:
         if frame_idx < len(frames):
             frame = frames[frame_idx]
@@ -78,21 +86,23 @@ def _speedscope_bottlenecks(name : str, root_dir):
                 file_path = frame.get('file', '')
                 line_no = frame.get('line', 0)
 
-                snippet = _get_snippet(file_path, line_no, root_dir)
-                if snippet:
-                    top_functions.append(snippet)
-                
-                if len(top_functions) >= 10:
-                    break
+                node = _get_node(file_path, line_no)
+                node_dump = ast.dump(node) 
+                if node_dump not in seen_nodes:
+                    seen_nodes.add(node_dump)
+                    top_nodes.append(node)
+
+                    if len(top_nodes) >= 10:
+                        break
     
-    return top_functions
+    if len(top_nodes) < 10:
+        print("WARNING: Not enough top nodes found in profile")
 
-
-# target here is 1-indexed
-def _get_snippet(abs_path : str, target : int, root_dir : Path):
+    return top_nodes
+    
+def _get_node(abs_path : str, target : int):
     with open(abs_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
-    relative_path = Path(abs_path).relative_to(root_dir)
     
     tree = ast.parse(''.join(lines), abs_path)
                 
@@ -114,29 +124,49 @@ def _get_snippet(abs_path : str, target : int, root_dir : Path):
                     if size < smallest_size:
                         smallest_size = size
                         best_match = node
+    best_match.filename = abs_path
+    return best_match
 
-                        start_idx, end_idx = start_line - 1, end_line - 1
-                        base_indent = len(lines[start_idx]) - len(lines[start_idx].lstrip())
-                        
-                        # get dedented snippet
-                        snippet = '\n'.join([line[base_indent:] for line in lines[start_idx : end_line]])
-                                                
-                        # get enclosing scopes
-                        enclosing_scopes = _get_enclosing_scopes(tree, node)
+def _node_to_obj(node, root_dir : Path):
+    abs_path = node.filename
 
-                        function = {'rel_path': relative_path,
-                                    'line': lines[target - 1],
-                                    'base_indent': base_indent,
-                                    'code' : snippet,
-                                    'start_line': start_idx,
-                                    'end_line': end_idx,
-                                    'scope': enclosing_scopes}
-                
-    if best_match:
-        return function
-    else:
-        return None
+    with open(abs_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    relative_path = Path(abs_path).relative_to(root_dir)
     
+    tree = ast.parse(''.join(lines), abs_path)
+    node_dump = ast.dump(node, include_attributes=False)
+
+    for node_tmp in ast.walk(tree):
+        if node_dump == ast.dump(node_tmp, include_attributes=False):
+            node = node_tmp
+            break
+
+    if hasattr(node, 'decorator_list') and node.decorator_list:
+        start_line = node.decorator_list[0].lineno
+    else:
+        start_line = node.lineno
+
+    end_line = node.end_lineno
+    
+    start_idx, end_idx = start_line - 1, end_line - 1
+    base_indent = len(lines[start_idx]) - len(lines[start_idx].lstrip())
+    
+    # get dedented snippet
+    snippet = '\n'.join([line[base_indent:] for line in lines[start_idx : end_line]])
+    
+    # get enclosing scopes
+    enclosing_scopes = _get_enclosing_scopes(tree, node)
+
+    function = {'rel_path': relative_path,
+                'base_indent': base_indent,
+                'code' : snippet,
+                'start_line': start_idx,
+                'end_line': end_idx,
+                'scope': enclosing_scopes}
+        
+    return function
+
 def _get_enclosing_scopes(tree, target_node):
     parent_map = {}
     for parent in ast.walk(tree):
@@ -153,3 +183,11 @@ def _get_enclosing_scopes(tree, target_node):
         current = parent
     
     return list(reversed(scopes))  # outermost first
+
+# two methods here:
+# 1. comapre clean dumps of nodes in edited files to find the target
+# 2. Include info about enclosing scopes & just compare enclosing scopes + name
+
+# Using method 1 for now but if not working 2
+# ALSO: edge case of encloding object being edited
+#   -Not worried because if signature of inner objects are altered then tests will fail

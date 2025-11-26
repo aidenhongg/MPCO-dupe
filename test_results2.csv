@@ -1,0 +1,3159 @@
+original_snippet,edited_snippet,project,optimizer,prompt,prompt_type,failed_attempts,avg_runtime
+"def median_filter(x: torch.Tensor, filter_width: int):
+
+    """"""Apply a median filter of width `filter_width` along the last dimension of `x`""""""
+
+    pad_width = filter_width // 2
+
+    if x.shape[-1] <= pad_width:
+
+        # F.pad requires the padding width to be smaller than the input dimension
+
+        return x
+
+
+
+    if (ndim := x.ndim) <= 2:
+
+        # `F.pad` does not support 1D or 2D inputs for reflect padding but supports 3D and 4D
+
+        x = x[None, None, :]
+
+
+
+    assert (
+
+        filter_width > 0 and filter_width % 2 == 1
+
+    ), ""`filter_width` should be an odd number""
+
+
+
+    result = None
+
+    x = F.pad(x, (filter_width // 2, filter_width // 2, 0, 0), mode=""reflect"")
+
+    if x.is_cuda:
+
+        try:
+
+            from .triton_ops import median_filter_cuda
+
+
+
+            result = median_filter_cuda(x, filter_width)
+
+        except (RuntimeError, subprocess.CalledProcessError):
+
+            warnings.warn(
+
+                ""Failed to launch Triton kernels, likely due to missing CUDA toolkit; ""
+
+                ""falling back to a slower median kernel implementation...""
+
+            )
+
+
+
+    if result is None:
+
+        # sort() is faster than torch.median (https://github.com/pytorch/pytorch/issues/51450)
+
+        result = x.unfold(-1, filter_width, 1).sort()[0][..., filter_width // 2]
+
+
+
+    if ndim <= 2:
+
+        result = result[0, 0]
+
+
+
+    return result
+","import torch
+import torch.nn.functional as F
+import warnings
+
+
+def median_filter(x: torch.Tensor, filter_width: int):
+    pad_width = filter_width // 2
+
+    if x.shape[-1] <= pad_width:
+        return x
+
+    assert filter_width > 0 and filter_width % 2 == 1, ""`filter_width` should be an odd number""
+
+    if x.ndim <= 2:
+        x = x[None, None, :]
+
+    x = F.pad(x, (pad_width, pad_width, 0, 0), mode=""reflect"")
+
+    if x.is_cuda:
+        try:
+            from .triton_ops import median_filter_cuda
+            return median_filter_cuda(x, filter_width)
+        except (RuntimeError, subprocess.CalledProcessError):
+            warnings.warn(""Failed to launch Triton kernels; falling back to slower implementation..."")
+
+    result = x.unfold(-1, filter_width, 1).sort()[0][..., pad_width]
+
+    if x.ndim <= 2:
+        return result[0, 0]
+
+    return result",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"def dtw_cuda(x, BLOCK_SIZE=1024):
+
+    from .triton_ops import dtw_kernel
+
+
+
+    M, N = x.shape
+
+    assert M < BLOCK_SIZE, f""M should be smaller than {BLOCK_SIZE=}""
+
+
+
+    x_skew = (
+
+        F.pad(x, (0, M + 1), value=np.inf).flatten()[: M * (N + M)].reshape(M, N + M)
+
+    )
+
+    x_skew = x_skew.T.contiguous()
+
+    cost = torch.ones(N + M + 2, M + 2) * np.inf
+
+    cost[0, 0] = 0
+
+    cost = cost.to(x.device)
+
+    trace = torch.zeros_like(cost, dtype=torch.int32)
+
+
+
+    dtw_kernel[(1,)](
+
+        cost,
+
+        trace,
+
+        x_skew,
+
+        x_skew.stride(0),
+
+        cost.stride(0),
+
+        trace.stride(0),
+
+        N,
+
+        M,
+
+        BLOCK_SIZE=BLOCK_SIZE,
+
+    )
+
+
+
+    trace = trace.T.flatten()[: (M + 1) * (M + N + 3)].reshape(M + 1, M + N + 3)[
+
+        :, : N + 1
+
+    ]
+
+    return backtrace(trace.cpu().numpy())
+","def dtw_cuda(x, BLOCK_SIZE=1024):
+    from .triton_ops import dtw_kernel
+    import torch.nn.functional as F
+    import numpy as np
+
+    M, N = x.shape
+    assert M < BLOCK_SIZE, f""M should be smaller than {BLOCK_SIZE=}""
+
+    x_skew = F.pad(x, (0, M + 1), value=np.inf).flatten()[: M * (N + M)].reshape(M, N + M).T.contiguous()
+    cost = torch.full((N + M + 2, M + 2), np.inf, device=x.device)
+    cost[0, 0] = 0
+    trace = torch.zeros_like(cost, dtype=torch.int32)
+
+    dtw_kernel[(1,)](
+        cost, trace, x_skew, x_skew.stride(0), cost.stride(0), trace.stride(0), N, M, BLOCK_SIZE=BLOCK_SIZE,
+    )
+
+    trace = trace.T.flatten()[: (M + 1) * (M + N + 3)].reshape(M + 1, M + N + 3)[:, : N + 1]
+    return backtrace(trace.cpu().numpy())",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"def load_model(
+
+    name: str,
+
+    device: Optional[Union[str, torch.device]] = None,
+
+    download_root: str = None,
+
+    in_memory: bool = False,
+
+) -> Whisper:
+
+    """"""
+
+    Load a Whisper ASR model
+
+
+
+    Parameters
+
+    ----------
+
+    name : str
+
+        one of the official model names listed by `whisper.available_models()`, or
+
+        path to a model checkpoint containing the model dimensions and the model state_dict.
+
+    device : Union[str, torch.device]
+
+        the PyTorch device to put the model into
+
+    download_root: str
+
+        path to download the model files; by default, it uses ""~/.cache/whisper""
+
+    in_memory: bool
+
+        whether to preload the model weights into host memory
+
+
+
+    Returns
+
+    -------
+
+    model : Whisper
+
+        The Whisper ASR model instance
+
+    """"""
+
+
+
+    if device is None:
+
+        device = ""cuda"" if torch.cuda.is_available() else ""cpu""
+
+    if download_root is None:
+
+        default = os.path.join(os.path.expanduser(""~""), "".cache"")
+
+        download_root = os.path.join(os.getenv(""XDG_CACHE_HOME"", default), ""whisper"")
+
+
+
+    if name in _MODELS:
+
+        checkpoint_file = _download(_MODELS[name], download_root, in_memory)
+
+        alignment_heads = _ALIGNMENT_HEADS[name]
+
+    elif os.path.isfile(name):
+
+        checkpoint_file = open(name, ""rb"").read() if in_memory else name
+
+        alignment_heads = None
+
+    else:
+
+        raise RuntimeError(
+
+            f""Model {name} not found; available models = {available_models()}""
+
+        )
+
+
+
+    with (
+
+        io.BytesIO(checkpoint_file) if in_memory else open(checkpoint_file, ""rb"")
+
+    ) as fp:
+
+        kwargs = {""weights_only"": True} if torch.__version__ >= ""1.13"" else {}
+
+        checkpoint = torch.load(fp, map_location=device, **kwargs)
+
+    del checkpoint_file
+
+
+
+    dims = ModelDimensions(**checkpoint[""dims""])
+
+    model = Whisper(dims)
+
+    model.load_state_dict(checkpoint[""model_state_dict""])
+
+
+
+    if alignment_heads is not None:
+
+        model.set_alignment_heads(alignment_heads)
+
+
+
+    return model.to(device)
+","def load_model(name: str, device: Optional[Union[str, torch.device]] = None, download_root: str = None, in_memory: bool = False) -> Whisper:
+    if device is None:
+        device = ""cuda"" if torch.cuda.is_available() else ""cpu""
+    if download_root is None:
+        download_root = os.path.join(os.getenv(""XDG_CACHE_HOME"", os.path.expanduser(""~/.cache"")), ""whisper"")
+
+    checkpoint_file = None
+    alignment_heads = None
+
+    if name in _MODELS:
+        checkpoint_file = _download(_MODELS[name], download_root, in_memory)
+        alignment_heads = _ALIGNMENT_HEADS[name]
+    elif os.path.isfile(name):
+        checkpoint_file = open(name, ""rb"").read() if in_memory else name
+    else:
+        raise RuntimeError(f""Model {name} not found; available models = {available_models()}"")
+
+    with (io.BytesIO(checkpoint_file) if in_memory else open(checkpoint_file, ""rb"")) as fp:
+        kwargs = {""weights_only"": True} if torch.__version__ >= ""1.13"" else {}
+        checkpoint = torch.load(fp, map_location=device, **kwargs)
+
+    dims = ModelDimensions(**checkpoint[""dims""])
+    model = Whisper(dims)
+    model.load_state_dict(checkpoint[""model_state_dict""])
+
+    if alignment_heads is not None:
+        model.set_alignment_heads(alignment_heads)
+
+    return model.to(device)",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"def __init__(self, dims: ModelDimensions):
+
+    super().__init__()
+
+    self.dims = dims
+
+    self.encoder = AudioEncoder(
+
+        self.dims.n_mels,
+
+        self.dims.n_audio_ctx,
+
+        self.dims.n_audio_state,
+
+        self.dims.n_audio_head,
+
+        self.dims.n_audio_layer,
+
+    )
+
+    self.decoder = TextDecoder(
+
+        self.dims.n_vocab,
+
+        self.dims.n_text_ctx,
+
+        self.dims.n_text_state,
+
+        self.dims.n_text_head,
+
+        self.dims.n_text_layer,
+
+    )
+
+    # use the last half among the decoder layers for time alignment by default;
+
+    # to use a specific set of heads, see `set_alignment_heads()` below.
+
+    all_heads = torch.zeros(
+
+        self.dims.n_text_layer, self.dims.n_text_head, dtype=torch.bool
+
+    )
+
+    all_heads[self.dims.n_text_layer // 2 :] = True
+
+    self.register_buffer(""alignment_heads"", all_heads.to_sparse(), persistent=False)
+","def __init__(self, dims: ModelDimensions):
+    super().__init__()
+    self.dims = dims
+    self.encoder = AudioEncoder(
+        dims.n_mels,
+        dims.n_audio_ctx,
+        dims.n_audio_state,
+        dims.n_audio_head,
+        dims.n_audio_layer,
+    )
+    self.decoder = TextDecoder(
+        dims.n_vocab,
+        dims.n_text_ctx,
+        dims.n_text_state,
+        dims.n_text_head,
+        dims.n_text_layer,
+    )
+    all_heads = torch.zeros(
+        dims.n_text_layer, dims.n_text_head, dtype=torch.bool
+    )
+    all_heads[dims.n_text_layer // 2 :] = True
+    self.register_buffer(""alignment_heads"", all_heads.to_sparse(), persistent=False)",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"def median_filter_cuda(x: torch.Tensor, filter_width: int):
+
+    """"""Apply a median filter of given width along the last dimension of x""""""
+
+    slices = x.contiguous().unfold(-1, filter_width, 1)
+
+    grid = np.prod(slices.shape[:-2])
+
+
+
+    kernel = median_kernel(filter_width)
+
+    y = torch.empty_like(slices[..., 0])
+
+
+
+    BLOCK_SIZE = 1 << (y.stride(-2) - 1).bit_length()
+
+    kernel[(grid,)](y, x, x.stride(-2), y.stride(-2), BLOCK_SIZE=BLOCK_SIZE)
+
+
+
+    return y
+","def median_filter_cuda(x: torch.Tensor, filter_width: int):
+    sliced = x.unfold(-1, filter_width, 1).contiguous().moveaxis(-1, 0)
+    median_vals = sliced.view(filter_width, -1).median(dim=0)[0]
+    reshaped = median_vals.view(x.shape[:-1] + (-1,))
+    return reshaped.squeeze(-1)",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,2,14.679499999999999
+"@lru_cache(maxsize=None)
+
+def get_tokenizer(
+
+    multilingual: bool,
+
+    *,
+
+    num_languages: int = 99,
+
+    language: Optional[str] = None,
+
+    task: Optional[str] = None,  # Literal[""transcribe"", ""translate"", None]
+
+) -> Tokenizer:
+
+    if language is not None:
+
+        language = language.lower()
+
+        if language not in LANGUAGES:
+
+            if language in TO_LANGUAGE_CODE:
+
+                language = TO_LANGUAGE_CODE[language]
+
+            else:
+
+                raise ValueError(f""Unsupported language: {language}"")
+
+
+
+    if multilingual:
+
+        encoding_name = ""multilingual""
+
+        language = language or ""en""
+
+        task = task or ""transcribe""
+
+    else:
+
+        encoding_name = ""gpt2""
+
+        language = None
+
+        task = None
+
+
+
+    encoding = get_encoding(name=encoding_name, num_languages=num_languages)
+
+
+
+    return Tokenizer(
+
+        encoding=encoding, num_languages=num_languages, language=language, task=task
+
+    )
+","@lru_cache(maxsize=None)
+def get_tokenizer(
+    multilingual: bool,
+    *,
+    num_languages: int = 99,
+    language: Optional[str] = None,
+    task: Optional[str] = None,
+) -> Tokenizer:
+    if language is not None:
+        language = TO_LANGUAGE_CODE.get(language.lower(), language)
+        if language not in LANGUAGES:
+            raise ValueError(f""Unsupported language: {language}"")
+
+    if multilingual:
+        encoding_name = ""multilingual""
+        language = language or ""en""
+        task = task or ""transcribe""
+    else:
+        encoding_name = ""gpt2""
+        language = None
+        task = None
+
+    encoding = get_encoding(name=encoding_name, num_languages=num_languages)
+
+    return Tokenizer(
+        encoding=encoding, num_languages=num_languages, language=language, task=task
+    )",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"def encode(self, text, **kwargs):
+
+    return self.encoding.encode(text, **kwargs)
+","def encode(self, text, **kwargs):
+    return self.encoding.encode(text, **kwargs)",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"@lru_cache(maxsize=None)
+
+def get_encoding(name: str = ""gpt2"", num_languages: int = 99):
+
+    vocab_path = os.path.join(os.path.dirname(__file__), ""assets"", f""{name}.tiktoken"")
+
+    ranks = {
+
+        base64.b64decode(token): int(rank)
+
+        for token, rank in (line.split() for line in open(vocab_path) if line)
+
+    }
+
+    n_vocab = len(ranks)
+
+    special_tokens = {}
+
+
+
+    specials = [
+
+        ""<|endoftext|>"",
+
+        ""<|startoftranscript|>"",
+
+        *[f""<|{lang}|>"" for lang in list(LANGUAGES.keys())[:num_languages]],
+
+        ""<|translate|>"",
+
+        ""<|transcribe|>"",
+
+        ""<|startoflm|>"",
+
+        ""<|startofprev|>"",
+
+        ""<|nospeech|>"",
+
+        ""<|notimestamps|>"",
+
+        *[f""<|{i * 0.02:.2f}|>"" for i in range(1501)],
+
+    ]
+
+
+
+    for token in specials:
+
+        special_tokens[token] = n_vocab
+
+        n_vocab += 1
+
+
+
+    return tiktoken.Encoding(
+
+        name=os.path.basename(vocab_path),
+
+        explicit_n_vocab=n_vocab,
+
+        pat_str=r""""""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""""",
+
+        mergeable_ranks=ranks,
+
+        special_tokens=special_tokens,
+
+    )
+","from functools import lru_cache
+import os
+import base64
+import tiktoken
+
+@lru_cache(maxsize=None)
+def get_encoding(name: str = ""gpt2"", num_languages: int = 99):
+    vocab_path = os.path.join(os.path.dirname(__file__), ""assets"", f""{name}.tiktoken"")
+    with open(vocab_path, 'r') as file:
+        ranks = {base64.b64decode(token): int(rank) for token, rank in (line.split() for line in file if line)}
+    n_vocab = len(ranks)
+    special_tokens = {}
+
+    specials = [
+        ""<|endoftext|>"",
+        ""<|startoftranscript|>"",
+        *[f""<|{lang}|>"" for lang in list(LANGUAGES.keys())[:num_languages]],
+        ""<|translate|>"",
+        ""<|transcribe|>"",
+        ""<|startoflm|>"",
+        ""<|startofprev|>"",
+        ""<|nospeech|>"",
+        ""<|notimestamps|>"",
+        *[f""<|{i * 0.02:.2f}|>"" for i in range(1501)],
+    ]
+
+    for token in specials:
+        special_tokens[token] = n_vocab
+        n_vocab += 1
+
+    return tiktoken.Encoding(
+        name=os.path.basename(vocab_path),
+        explicit_n_vocab=n_vocab,
+        pat_str=r""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"",
+        mergeable_ranks=ranks,
+        special_tokens=special_tokens,
+    )",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"def _download(url: str, root: str, in_memory: bool) -> Union[bytes, str]:
+
+    os.makedirs(root, exist_ok=True)
+
+
+
+    expected_sha256 = url.split(""/"")[-2]
+
+    download_target = os.path.join(root, os.path.basename(url))
+
+
+
+    if os.path.exists(download_target) and not os.path.isfile(download_target):
+
+        raise RuntimeError(f""{download_target} exists and is not a regular file"")
+
+
+
+    if os.path.isfile(download_target):
+
+        with open(download_target, ""rb"") as f:
+
+            model_bytes = f.read()
+
+        if hashlib.sha256(model_bytes).hexdigest() == expected_sha256:
+
+            return model_bytes if in_memory else download_target
+
+        else:
+
+            warnings.warn(
+
+                f""{download_target} exists, but the SHA256 checksum does not match; re-downloading the file""
+
+            )
+
+
+
+    with urllib.request.urlopen(url) as source, open(download_target, ""wb"") as output:
+
+        with tqdm(
+
+            total=int(source.info().get(""Content-Length"")),
+
+            ncols=80,
+
+            unit=""iB"",
+
+            unit_scale=True,
+
+            unit_divisor=1024,
+
+        ) as loop:
+
+            while True:
+
+                buffer = source.read(8192)
+
+                if not buffer:
+
+                    break
+
+
+
+                output.write(buffer)
+
+                loop.update(len(buffer))
+
+
+
+    model_bytes = open(download_target, ""rb"").read()
+
+    if hashlib.sha256(model_bytes).hexdigest() != expected_sha256:
+
+        raise RuntimeError(
+
+            ""Model has been downloaded but the SHA256 checksum does not not match. Please retry loading the model.""
+
+        )
+
+
+
+    return model_bytes if in_memory else download_target
+","from concurrent.futures import ThreadPoolExecutor
+import os
+import hashlib
+import urllib.request
+import warnings
+from tqdm import tqdm
+from typing import Union
+
+def _download(url: str, root: str, in_memory: bool) -> Union[bytes, str]:
+    os.makedirs(root, exist_ok=True)
+    expected_sha256 = url.split(""/"")[-2]
+    download_target = os.path.join(root, os.path.basename(url))
+
+    if os.path.exists(download_target):
+        if not os.path.isfile(download_target):
+            raise RuntimeError(f""{download_target} exists and is not a regular file"")
+        with open(download_target, ""rb"") as f:
+            model_bytes = f.read()
+        if hashlib.sha256(model_bytes).hexdigest() == expected_sha256:
+            return model_bytes if in_memory else download_target
+        else:
+            warnings.warn(
+                f""{download_target} exists, but the SHA256 checksum does not match; re-downloading the file""
+            )
+
+    def download_chunk(source, output, start, size):
+        source.seek(start)
+        buffer = source.read(size)
+        output.seek(start)
+        output.write(buffer)
+        return len(buffer)
+
+    with urllib.request.urlopen(url) as source:
+        total_size = int(source.info().get(""Content-Length""))
+        with open(download_target, ""wb"") as output:
+            output.truncate(total_size)  # Allocate space
+            
+            chunk_size = 8192
+            positions = range(0, total_size, chunk_size)
+            
+            with ThreadPoolExecutor() as executor:
+                with tqdm(total=total_size, ncols=80, unit=""iB"", unit_scale=True, unit_divisor=1024) as loop:
+                    futures = []
+                    for pos in positions:
+                        futures.append(executor.submit(download_chunk, source, output, pos, min(chunk_size, total_size - pos)))
+                    for future in futures:
+                        loop.update(future.result())
+
+    model_bytes = open(download_target, ""rb"").read()
+    if hashlib.sha256(model_bytes).hexdigest() != expected_sha256:
+        raise RuntimeError(
+            ""Model has been downloaded but the SHA256 checksum does not not match. Please retry loading the model.""
+        )
+
+    return model_bytes if in_memory else download_target
+",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"def load_audio(file: str, sr: int = SAMPLE_RATE):
+
+    """"""
+
+    Open an audio file and read as mono waveform, resampling as necessary
+
+
+
+    Parameters
+
+    ----------
+
+    file: str
+
+        The audio file to open
+
+
+
+    sr: int
+
+        The sample rate to resample the audio if necessary
+
+
+
+    Returns
+
+    -------
+
+    A NumPy array containing the audio waveform, in float32 dtype.
+
+    """"""
+
+
+
+    # This launches a subprocess to decode audio while down-mixing
+
+    # and resampling as necessary.  Requires the ffmpeg CLI in PATH.
+
+    # fmt: off
+
+    cmd = [
+
+        ""ffmpeg"",
+
+        ""-nostdin"",
+
+        ""-threads"", ""0"",
+
+        ""-i"", file,
+
+        ""-f"", ""s16le"",
+
+        ""-ac"", ""1"",
+
+        ""-acodec"", ""pcm_s16le"",
+
+        ""-ar"", str(sr),
+
+        ""-""
+
+    ]
+
+    # fmt: on
+
+    try:
+
+        out = run(cmd, capture_output=True, check=True).stdout
+
+    except CalledProcessError as e:
+
+        raise RuntimeError(f""Failed to load audio: {e.stderr.decode()}"") from e
+
+
+
+    return np.frombuffer(out, np.int16).flatten().astype(np.float32) / 32768.0
+","def load_audio(file: str, sr: int = SAMPLE_RATE):
+    cmd = [
+        ""ffmpeg"",
+        ""-nostdin"",
+        ""-threads"", ""auto"",
+        ""-i"", file,
+        ""-f"", ""s16le"",
+        ""-ac"", ""1"",
+        ""-acodec"", ""pcm_s16le"",
+        ""-ar"", str(sr),
+        ""-"",
+    ]
+    try:
+        out = run(cmd, capture_output=True, check=True).stdout
+    except CalledProcessError as e:
+        raise RuntimeError(f""Failed to load audio: {e.stderr.decode()}"") from e
+
+    return np.frombuffer(out, dtype=np.int16).astype(np.float32) / 32768.0",whisper,4o,"Optimize the provided Python code object strictly for runtime efficiency while maintaining its original signature and interface. Focus on enhancing algorithmic efficiency, reducing time complexity, improving data structure usage, and optimizing loops and memory access. Consider all aspects of performance - including parallel processing where beneficial. The optimized object should maintain functionality and meet project requirements outlined in Whisper's objectives for robust speech recognition. Return only the enhanced code snippet without additional explanations or modifications to the surrounding context.",MP,0,14.679499999999999
+"def median_filter(x: torch.Tensor, filter_width: int):
+
+    """"""Apply a median filter of width `filter_width` along the last dimension of `x`""""""
+
+    pad_width = filter_width // 2
+
+    if x.shape[-1] <= pad_width:
+
+        # F.pad requires the padding width to be smaller than the input dimension
+
+        return x
+
+
+
+    if (ndim := x.ndim) <= 2:
+
+        # `F.pad` does not support 1D or 2D inputs for reflect padding but supports 3D and 4D
+
+        x = x[None, None, :]
+
+
+
+    assert (
+
+        filter_width > 0 and filter_width % 2 == 1
+
+    ), ""`filter_width` should be an odd number""
+
+
+
+    result = None
+
+    x = F.pad(x, (filter_width // 2, filter_width // 2, 0, 0), mode=""reflect"")
+
+    if x.is_cuda:
+
+        try:
+
+            from .triton_ops import median_filter_cuda
+
+
+
+            result = median_filter_cuda(x, filter_width)
+
+        except (RuntimeError, subprocess.CalledProcessError):
+
+            warnings.warn(
+
+                ""Failed to launch Triton kernels, likely due to missing CUDA toolkit; ""
+
+                ""falling back to a slower median kernel implementation...""
+
+            )
+
+
+
+    if result is None:
+
+        # sort() is faster than torch.median (https://github.com/pytorch/pytorch/issues/51450)
+
+        result = x.unfold(-1, filter_width, 1).sort()[0][..., filter_width // 2]
+
+
+
+    if ndim <= 2:
+
+        result = result[0, 0]
+
+
+
+    return result
+","def median_filter(x: torch.Tensor, filter_width: int):
+    """"""Apply a median filter of width `filter_width` along the last dimension of `x`""""""
+    if filter_width <= 0 or filter_width % 2 == 0:
+        raise ValueError(""`filter_width` should be a positive odd number"")
+
+    pad_width = filter_width // 2
+    if x.shape[-1] <= pad_width:
+        return x
+
+    ndim = x.ndim
+    if ndim <= 2:
+        x = x.unsqueeze(0).unsqueeze(0)
+
+    x = F.pad(x, (pad_width, pad_width, 0, 0), mode=""reflect"")
+
+    if x.is_cuda:
+        try:
+            from .triton_ops import median_filter_cuda
+            return (median_filter_cuda(x, filter_width))[0, 0] if ndim <= 2 else median_filter_cuda(x, filter_width)
+        except (RuntimeError, subprocess.CalledProcessError):
+            warnings.warn(""Falling back to a slower median kernel implementation..."")
+
+    result = x.unfold(-1, filter_width, 1).sort()[0][..., pad_width]
+    return result[0, 0] if ndim <= 2 else result",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,0,13.6023
+"def dtw_cuda(x, BLOCK_SIZE=1024):
+
+    from .triton_ops import dtw_kernel
+
+
+
+    M, N = x.shape
+
+    assert M < BLOCK_SIZE, f""M should be smaller than {BLOCK_SIZE=}""
+
+
+
+    x_skew = (
+
+        F.pad(x, (0, M + 1), value=np.inf).flatten()[: M * (N + M)].reshape(M, N + M)
+
+    )
+
+    x_skew = x_skew.T.contiguous()
+
+    cost = torch.ones(N + M + 2, M + 2) * np.inf
+
+    cost[0, 0] = 0
+
+    cost = cost.to(x.device)
+
+    trace = torch.zeros_like(cost, dtype=torch.int32)
+
+
+
+    dtw_kernel[(1,)](
+
+        cost,
+
+        trace,
+
+        x_skew,
+
+        x_skew.stride(0),
+
+        cost.stride(0),
+
+        trace.stride(0),
+
+        N,
+
+        M,
+
+        BLOCK_SIZE=BLOCK_SIZE,
+
+    )
+
+
+
+    trace = trace.T.flatten()[: (M + 1) * (M + N + 3)].reshape(M + 1, M + N + 3)[
+
+        :, : N + 1
+
+    ]
+
+    return backtrace(trace.cpu().numpy())
+","def dtw_cuda(x, BLOCK_SIZE=1024):
+    from .triton_ops import dtw_kernel
+    M, N = x.shape
+    assert M < BLOCK_SIZE, f""M should be smaller than {BLOCK_SIZE=}""
+    x_skew = F.pad(x, (0, M + 1), value=np.inf).flatten()[: M * (N + M)].reshape(M, N + M).T.contiguous()
+    cost = torch.full((N + M + 2, M + 2), np.inf, device=x.device)
+    cost[0, 0] = 0
+    trace = torch.zeros((N + M + 2, M + 2), dtype=torch.int32, device=x.device)
+    dtw_kernel[(1,)](cost, trace, x_skew, x_skew.stride(0), cost.stride(0), trace.stride(0), N, M, BLOCK_SIZE=BLOCK_SIZE)
+    trace = trace.T.flatten()[: (M + 1) * (M + N + 3)].reshape(M + 1, M + N + 3)[:, : N + 1]
+    return backtrace(trace.cpu().numpy())",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,4,13.6023
+"def load_model(
+
+    name: str,
+
+    device: Optional[Union[str, torch.device]] = None,
+
+    download_root: str = None,
+
+    in_memory: bool = False,
+
+) -> Whisper:
+
+    """"""
+
+    Load a Whisper ASR model
+
+
+
+    Parameters
+
+    ----------
+
+    name : str
+
+        one of the official model names listed by `whisper.available_models()`, or
+
+        path to a model checkpoint containing the model dimensions and the model state_dict.
+
+    device : Union[str, torch.device]
+
+        the PyTorch device to put the model into
+
+    download_root: str
+
+        path to download the model files; by default, it uses ""~/.cache/whisper""
+
+    in_memory: bool
+
+        whether to preload the model weights into host memory
+
+
+
+    Returns
+
+    -------
+
+    model : Whisper
+
+        The Whisper ASR model instance
+
+    """"""
+
+
+
+    if device is None:
+
+        device = ""cuda"" if torch.cuda.is_available() else ""cpu""
+
+    if download_root is None:
+
+        default = os.path.join(os.path.expanduser(""~""), "".cache"")
+
+        download_root = os.path.join(os.getenv(""XDG_CACHE_HOME"", default), ""whisper"")
+
+
+
+    if name in _MODELS:
+
+        checkpoint_file = _download(_MODELS[name], download_root, in_memory)
+
+        alignment_heads = _ALIGNMENT_HEADS[name]
+
+    elif os.path.isfile(name):
+
+        checkpoint_file = open(name, ""rb"").read() if in_memory else name
+
+        alignment_heads = None
+
+    else:
+
+        raise RuntimeError(
+
+            f""Model {name} not found; available models = {available_models()}""
+
+        )
+
+
+
+    with (
+
+        io.BytesIO(checkpoint_file) if in_memory else open(checkpoint_file, ""rb"")
+
+    ) as fp:
+
+        kwargs = {""weights_only"": True} if torch.__version__ >= ""1.13"" else {}
+
+        checkpoint = torch.load(fp, map_location=device, **kwargs)
+
+    del checkpoint_file
+
+
+
+    dims = ModelDimensions(**checkpoint[""dims""])
+
+    model = Whisper(dims)
+
+    model.load_state_dict(checkpoint[""model_state_dict""])
+
+
+
+    if alignment_heads is not None:
+
+        model.set_alignment_heads(alignment_heads)
+
+
+
+    return model.to(device)
+","def load_model(name: str, device: Optional[Union[str, torch.device]] = None, download_root: str = None, in_memory: bool = False) -> Whisper:
+    if device is None:
+        device = ""cuda"" if torch.cuda.is_available() else ""cpu""
+    if download_root is None:
+        default = os.path.join(os.path.expanduser(""~""), "".cache"")
+        download_root = os.path.join(os.getenv(""XDG_CACHE_HOME"", default), ""whisper"")
+
+    if name in _MODELS:
+        checkpoint_file = _download(_MODELS[name], download_root, in_memory)
+        alignment_heads = _ALIGNMENT_HEADS[name]
+    elif os.path.isfile(name):
+        checkpoint_file = open(name, ""rb"").read() if in_memory else name
+        alignment_heads = None
+    else:
+        raise RuntimeError(f""Model {name} not found; available models = {available_models()}"")
+
+    with io.BytesIO(checkpoint_file) if in_memory else open(checkpoint_file, ""rb"") as fp:
+        kwargs = {""weights_only"": True} if torch.__version__ >= ""1.13"" else {}
+        checkpoint = torch.load(fp, map_location=device, **kwargs)
+    
+    dims = ModelDimensions(**checkpoint[""dims""])
+    model = Whisper(dims)
+    model.load_state_dict(checkpoint[""model_state_dict""])
+
+    if alignment_heads is not None:
+        model.set_alignment_heads(alignment_heads)
+
+    return model.to(device)",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,0,13.6023
+"def __init__(self, dims: ModelDimensions):
+
+    super().__init__()
+
+    self.dims = dims
+
+    self.encoder = AudioEncoder(
+
+        self.dims.n_mels,
+
+        self.dims.n_audio_ctx,
+
+        self.dims.n_audio_state,
+
+        self.dims.n_audio_head,
+
+        self.dims.n_audio_layer,
+
+    )
+
+    self.decoder = TextDecoder(
+
+        self.dims.n_vocab,
+
+        self.dims.n_text_ctx,
+
+        self.dims.n_text_state,
+
+        self.dims.n_text_head,
+
+        self.dims.n_text_layer,
+
+    )
+
+    # use the last half among the decoder layers for time alignment by default;
+
+    # to use a specific set of heads, see `set_alignment_heads()` below.
+
+    all_heads = torch.zeros(
+
+        self.dims.n_text_layer, self.dims.n_text_head, dtype=torch.bool
+
+    )
+
+    all_heads[self.dims.n_text_layer // 2 :] = True
+
+    self.register_buffer(""alignment_heads"", all_heads.to_sparse(), persistent=False)
+","class Whisper:
+    def __init__(self, dims: ModelDimensions):
+        super().__init__()
+        self.dims = dims
+        self.encoder = AudioEncoder(
+            dims.n_mels,
+            dims.n_audio_ctx,
+            dims.n_audio_state,
+            dims.n_audio_head,
+            dims.n_audio_layer
+        )
+        self.decoder = TextDecoder(
+            dims.n_vocab,
+            dims.n_text_ctx,
+            dims.n_text_state,
+            dims.n_text_head,
+            dims.n_text_layer
+        )
+        # Initialize alignment heads
+        self.register_buffer(
+            ""alignment_heads"",
+            torch.sparse_coo_tensor(
+                indices=[[i] for i in range(dims.n_text_layer // 2, dims.n_text_layer)],
+                values=[True] * (dims.n_text_layer - dims.n_text_layer // 2) * dims.n_text_head,
+                size=(dims.n_text_layer, dims.n_text_head),
+                dtype=torch.bool
+            ),
+            persistent=False
+        )",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,0,13.6023
+"def median_filter_cuda(x: torch.Tensor, filter_width: int):
+
+    """"""Apply a median filter of given width along the last dimension of x""""""
+
+    slices = x.contiguous().unfold(-1, filter_width, 1)
+
+    grid = np.prod(slices.shape[:-2])
+
+
+
+    kernel = median_kernel(filter_width)
+
+    y = torch.empty_like(slices[..., 0])
+
+
+
+    BLOCK_SIZE = 1 << (y.stride(-2) - 1).bit_length()
+
+    kernel[(grid,)](y, x, x.stride(-2), y.stride(-2), BLOCK_SIZE=BLOCK_SIZE)
+
+
+
+    return y
+","def median_filter_cuda(x: torch.Tensor, filter_width: int):
+    slices = x.unfold(-1, filter_width, 1)
+    flat_slices = slices.reshape(-1, slices.size(-1))
+    y = torch.median(flat_slices, dim=-1).values
+    return y.reshape(slices.shape[:-1])",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,5,13.6023
+"@lru_cache(maxsize=None)
+
+def get_tokenizer(
+
+    multilingual: bool,
+
+    *,
+
+    num_languages: int = 99,
+
+    language: Optional[str] = None,
+
+    task: Optional[str] = None,  # Literal[""transcribe"", ""translate"", None]
+
+) -> Tokenizer:
+
+    if language is not None:
+
+        language = language.lower()
+
+        if language not in LANGUAGES:
+
+            if language in TO_LANGUAGE_CODE:
+
+                language = TO_LANGUAGE_CODE[language]
+
+            else:
+
+                raise ValueError(f""Unsupported language: {language}"")
+
+
+
+    if multilingual:
+
+        encoding_name = ""multilingual""
+
+        language = language or ""en""
+
+        task = task or ""transcribe""
+
+    else:
+
+        encoding_name = ""gpt2""
+
+        language = None
+
+        task = None
+
+
+
+    encoding = get_encoding(name=encoding_name, num_languages=num_languages)
+
+
+
+    return Tokenizer(
+
+        encoding=encoding, num_languages=num_languages, language=language, task=task
+
+    )
+","@lru_cache(maxsize=None)
+def get_tokenizer(multilingual: bool, *, num_languages: int = 99, language: Optional[str] = None, task: Optional[str] = None) -> Tokenizer:
+    if language:
+        language = TO_LANGUAGE_CODE.get(language.lower(), language)
+        if language not in LANGUAGES:
+            raise ValueError(f""Unsupported language: {language}"")
+
+    encoding_name = ""multilingual"" if multilingual else ""gpt2""
+    if multilingual:
+        language, task = language or ""en"", task or ""transcribe""
+    else:
+        language, task = None, None
+
+    encoding = get_encoding(name=encoding_name, num_languages=num_languages)
+    return Tokenizer(encoding=encoding, num_languages=num_languages, language=language, task=task)",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,0,13.6023
+"def encode(self, text, **kwargs):
+
+    return self.encoding.encode(text, **kwargs)
+","def encode(self, text, **kwargs):
+    return self.encoding.encode(text, **kwargs)",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,1,13.6023
+"@lru_cache(maxsize=None)
+
+def get_encoding(name: str = ""gpt2"", num_languages: int = 99):
+
+    vocab_path = os.path.join(os.path.dirname(__file__), ""assets"", f""{name}.tiktoken"")
+
+    ranks = {
+
+        base64.b64decode(token): int(rank)
+
+        for token, rank in (line.split() for line in open(vocab_path) if line)
+
+    }
+
+    n_vocab = len(ranks)
+
+    special_tokens = {}
+
+
+
+    specials = [
+
+        ""<|endoftext|>"",
+
+        ""<|startoftranscript|>"",
+
+        *[f""<|{lang}|>"" for lang in list(LANGUAGES.keys())[:num_languages]],
+
+        ""<|translate|>"",
+
+        ""<|transcribe|>"",
+
+        ""<|startoflm|>"",
+
+        ""<|startofprev|>"",
+
+        ""<|nospeech|>"",
+
+        ""<|notimestamps|>"",
+
+        *[f""<|{i * 0.02:.2f}|>"" for i in range(1501)],
+
+    ]
+
+
+
+    for token in specials:
+
+        special_tokens[token] = n_vocab
+
+        n_vocab += 1
+
+
+
+    return tiktoken.Encoding(
+
+        name=os.path.basename(vocab_path),
+
+        explicit_n_vocab=n_vocab,
+
+        pat_str=r""""""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""""",
+
+        mergeable_ranks=ranks,
+
+        special_tokens=special_tokens,
+
+    )
+","from functools import lru_cache
+import os
+import base64
+import tiktoken
+
+LANGUAGES = {'en': 'English', 'es': 'Spanish'} # Example languages
+
+@lru_cache(maxsize=None)
+def get_encoding(name: str = ""gpt2"", num_languages: int = 99):
+    vocab_path = os.path.join(os.path.dirname(__file__), ""assets"", f""{name}.tiktoken"")
+    with open(vocab_path) as f:
+        ranks = {base64.b64decode(token): int(rank) for line in f for token, rank in [line.split()]}
+    
+    n_vocab = len(ranks)
+    specials = [
+        ""<|endoftext|>"", ""<|startoftranscript|>"", ""<|translate|>"", ""<|transcribe|>"",
+        ""<|startoflm|>"", ""<|startofprev|>"", ""<|nospeech|>"", ""<|notimestamps|>"",
+        *(f""<|{lang}|>"" for lang in list(LANGUAGES.keys())[:num_languages]),
+        *(f""<|{i * 0.02:.2f}|>"" for i in range(1501))
+    ]
+
+    special_tokens = {token: i + n_vocab for i, token in enumerate(specials)}
+
+    return tiktoken.Encoding(
+        name=os.path.basename(vocab_path),
+        explicit_n_vocab=n_vocab + len(specials),
+        pat_str=r""""""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""""",
+        mergeable_ranks=ranks,
+        special_tokens=special_tokens,
+    )",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,0,13.6023
+"def _download(url: str, root: str, in_memory: bool) -> Union[bytes, str]:
+
+    os.makedirs(root, exist_ok=True)
+
+
+
+    expected_sha256 = url.split(""/"")[-2]
+
+    download_target = os.path.join(root, os.path.basename(url))
+
+
+
+    if os.path.exists(download_target) and not os.path.isfile(download_target):
+
+        raise RuntimeError(f""{download_target} exists and is not a regular file"")
+
+
+
+    if os.path.isfile(download_target):
+
+        with open(download_target, ""rb"") as f:
+
+            model_bytes = f.read()
+
+        if hashlib.sha256(model_bytes).hexdigest() == expected_sha256:
+
+            return model_bytes if in_memory else download_target
+
+        else:
+
+            warnings.warn(
+
+                f""{download_target} exists, but the SHA256 checksum does not match; re-downloading the file""
+
+            )
+
+
+
+    with urllib.request.urlopen(url) as source, open(download_target, ""wb"") as output:
+
+        with tqdm(
+
+            total=int(source.info().get(""Content-Length"")),
+
+            ncols=80,
+
+            unit=""iB"",
+
+            unit_scale=True,
+
+            unit_divisor=1024,
+
+        ) as loop:
+
+            while True:
+
+                buffer = source.read(8192)
+
+                if not buffer:
+
+                    break
+
+
+
+                output.write(buffer)
+
+                loop.update(len(buffer))
+
+
+
+    model_bytes = open(download_target, ""rb"").read()
+
+    if hashlib.sha256(model_bytes).hexdigest() != expected_sha256:
+
+        raise RuntimeError(
+
+            ""Model has been downloaded but the SHA256 checksum does not not match. Please retry loading the model.""
+
+        )
+
+
+
+    return model_bytes if in_memory else download_target
+","def _download(url: str, root: str, in_memory: bool) -> Union[bytes, str]:
+    os.makedirs(root, exist_ok=True)
+    expected_sha256 = url.split('/')[-2]
+    download_target = os.path.join(root, os.path.basename(url))
+
+    if os.path.isfile(download_target):
+        with open(download_target, ""rb"") as f:
+            model_bytes = f.read()
+        if hashlib.sha256(model_bytes).hexdigest() == expected_sha256:
+            return model_bytes if in_memory else download_target
+        warnings.warn(f""{download_target} exists, but the SHA256 checksum does not match; re-downloading the file"")
+
+    with urllib.request.urlopen(url) as source, open(download_target, ""wb"") as output, tqdm(
+        total=int(source.info().get(""Content-Length"")), ncols=80, unit=""iB"", unit_scale=True, unit_divisor=1024
+    ) as loop:
+        for buffer in iter(lambda: source.read(8192), b''):
+            output.write(buffer)
+            loop.update(len(buffer))
+
+    with open(download_target, ""rb"") as f:
+        model_bytes = f.read()
+    if hashlib.sha256(model_bytes).hexdigest() != expected_sha256:
+        raise RuntimeError(""Model has been downloaded but the SHA256 checksum does not match. Please retry loading the model."")
+
+    return model_bytes if in_memory else download_target",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,0,13.6023
+"def load_audio(file: str, sr: int = SAMPLE_RATE):
+
+    """"""
+
+    Open an audio file and read as mono waveform, resampling as necessary
+
+
+
+    Parameters
+
+    ----------
+
+    file: str
+
+        The audio file to open
+
+
+
+    sr: int
+
+        The sample rate to resample the audio if necessary
+
+
+
+    Returns
+
+    -------
+
+    A NumPy array containing the audio waveform, in float32 dtype.
+
+    """"""
+
+
+
+    # This launches a subprocess to decode audio while down-mixing
+
+    # and resampling as necessary.  Requires the ffmpeg CLI in PATH.
+
+    # fmt: off
+
+    cmd = [
+
+        ""ffmpeg"",
+
+        ""-nostdin"",
+
+        ""-threads"", ""0"",
+
+        ""-i"", file,
+
+        ""-f"", ""s16le"",
+
+        ""-ac"", ""1"",
+
+        ""-acodec"", ""pcm_s16le"",
+
+        ""-ar"", str(sr),
+
+        ""-""
+
+    ]
+
+    # fmt: on
+
+    try:
+
+        out = run(cmd, capture_output=True, check=True).stdout
+
+    except CalledProcessError as e:
+
+        raise RuntimeError(f""Failed to load audio: {e.stderr.decode()}"") from e
+
+
+
+    return np.frombuffer(out, np.int16).flatten().astype(np.float32) / 32768.0
+","from subprocess import Popen, PIPE
+import numpy as np
+
+SAMPLE_RATE = 44100  # Default sample rate if needed
+
+
+def load_audio(file: str, sr: int = SAMPLE_RATE) -> np.ndarray:
+    process = Popen([
+        ""ffmpeg"",
+        ""-nostdin"",
+        ""-threads"", ""0"",
+        ""-i"", file,
+        ""-f"", ""s16le"",
+        ""-ac"", ""1"",
+        ""-acodec"", ""pcm_s16le"",
+        ""-ar"", str(sr),
+        ""-""
+    ], stdout=PIPE, stderr=PIPE)
+
+    out, err = process.communicate()
+
+    if process.returncode != 0:
+        raise RuntimeError(f""Failed to load audio: {err.decode()}"")
+
+    return np.frombuffer(out, dtype=np.int16).astype(np.float32) / 32768.0",whisper,4o,"Here are examples of code optimization:
+Example 1 - Loop optimization:
+Original: for i in range(len(arr)): if arr[i] > threshold: result.append(arr[i])
+Optimized: result = [x for x in arr if x > threshold]
+
+Example 2 - Algorithm optimization:
+Original: for i in range(n): for j in range(n): if matrix[i][j] > 0: count += 1
+Optimized: count = np.sum(matrix > 0)
+
+Example 3 - Data structure optimization:
+Original: items = []; for x in data: items.append(x); return sorted(items)
+Optimized: return sorted(data)
+
+Now optimize the code for better runtime performance, then provide only the final optimized code.",FS,0,13.6023
+"def median_filter(x: torch.Tensor, filter_width: int):
+
+    """"""Apply a median filter of width `filter_width` along the last dimension of `x`""""""
+
+    pad_width = filter_width // 2
+
+    if x.shape[-1] <= pad_width:
+
+        # F.pad requires the padding width to be smaller than the input dimension
+
+        return x
+
+
+
+    if (ndim := x.ndim) <= 2:
+
+        # `F.pad` does not support 1D or 2D inputs for reflect padding but supports 3D and 4D
+
+        x = x[None, None, :]
+
+
+
+    assert (
+
+        filter_width > 0 and filter_width % 2 == 1
+
+    ), ""`filter_width` should be an odd number""
+
+
+
+    result = None
+
+    x = F.pad(x, (filter_width // 2, filter_width // 2, 0, 0), mode=""reflect"")
+
+    if x.is_cuda:
+
+        try:
+
+            from .triton_ops import median_filter_cuda
+
+
+
+            result = median_filter_cuda(x, filter_width)
+
+        except (RuntimeError, subprocess.CalledProcessError):
+
+            warnings.warn(
+
+                ""Failed to launch Triton kernels, likely due to missing CUDA toolkit; ""
+
+                ""falling back to a slower median kernel implementation...""
+
+            )
+
+
+
+    if result is None:
+
+        # sort() is faster than torch.median (https://github.com/pytorch/pytorch/issues/51450)
+
+        result = x.unfold(-1, filter_width, 1).sort()[0][..., filter_width // 2]
+
+
+
+    if ndim <= 2:
+
+        result = result[0, 0]
+
+
+
+    return result
+","def median_filter(x: torch.Tensor, filter_width: int):
+    pad_width = filter_width // 2
+    if x.shape[-1] <= pad_width:
+        return x
+
+    x = x[None, None, :] if x.ndim <= 2 else x
+    assert filter_width > 0 and filter_width % 2 == 1, ""`filter_width` should be an odd number""
+
+    x = F.pad(x, (pad_width, pad_width, 0, 0), mode=""reflect"")
+    if x.is_cuda:
+        try:
+            from .triton_ops import median_filter_cuda
+            # Avoid using a variable only for checking `None`
+            return median_filter_cuda(x, filter_width)
+        except (RuntimeError, subprocess.CalledProcessError):
+            warnings.warn(""Failed to launch Triton kernels, likely due to missing CUDA toolkit; ""
+                          ""falling back to a slower median kernel implementation..."")
+
+    # Directly process the result with unfold and sort
+    result = x.unfold(-1, filter_width, 1).sort()[0][..., pad_width]
+    return result[0, 0] if x.ndim <= 2 else result
+",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,1,13.6784
+"def dtw_cuda(x, BLOCK_SIZE=1024):
+
+    from .triton_ops import dtw_kernel
+
+
+
+    M, N = x.shape
+
+    assert M < BLOCK_SIZE, f""M should be smaller than {BLOCK_SIZE=}""
+
+
+
+    x_skew = (
+
+        F.pad(x, (0, M + 1), value=np.inf).flatten()[: M * (N + M)].reshape(M, N + M)
+
+    )
+
+    x_skew = x_skew.T.contiguous()
+
+    cost = torch.ones(N + M + 2, M + 2) * np.inf
+
+    cost[0, 0] = 0
+
+    cost = cost.to(x.device)
+
+    trace = torch.zeros_like(cost, dtype=torch.int32)
+
+
+
+    dtw_kernel[(1,)](
+
+        cost,
+
+        trace,
+
+        x_skew,
+
+        x_skew.stride(0),
+
+        cost.stride(0),
+
+        trace.stride(0),
+
+        N,
+
+        M,
+
+        BLOCK_SIZE=BLOCK_SIZE,
+
+    )
+
+
+
+    trace = trace.T.flatten()[: (M + 1) * (M + N + 3)].reshape(M + 1, M + N + 3)[
+
+        :, : N + 1
+
+    ]
+
+    return backtrace(trace.cpu().numpy())
+","def dtw_cuda(x, BLOCK_SIZE=1024):
+    from .triton_ops import dtw_kernel
+    import torch
+    import numpy as np
+
+    M, N = x.shape
+
+    assert M < BLOCK_SIZE, f""M should be smaller than {BLOCK_SIZE=}""
+
+    x_skew = torch.nn.functional.pad(x, (0, M + 1), value=float('inf')).flatten()[: M * (N + M)].view(M, N + M)
+    x_skew = x_skew.transpose(0, 1).contiguous()
+
+    cost = torch.full((N + M + 2, M + 2), float('inf'), device=x.device)
+    cost[0, 0] = 0
+    trace = torch.zeros((N + M + 2, M + 2), dtype=torch.int32, device=x.device)
+
+    dtw_kernel[(1,)](
+        cost,
+        trace,
+        x_skew,
+        x_skew.stride(0),
+        cost.stride(0),
+        trace.stride(0),
+        N,
+        M,
+        BLOCK_SIZE=BLOCK_SIZE,
+    )
+
+    trace = trace.transpose(0, 1).flatten()[: (M + 1) * (M + N + 3)].view(M + 1, M + N + 3)[:, : N + 1]
+
+    return backtrace(trace.cpu().numpy())",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,1,13.6784
+"def load_model(
+
+    name: str,
+
+    device: Optional[Union[str, torch.device]] = None,
+
+    download_root: str = None,
+
+    in_memory: bool = False,
+
+) -> Whisper:
+
+    """"""
+
+    Load a Whisper ASR model
+
+
+
+    Parameters
+
+    ----------
+
+    name : str
+
+        one of the official model names listed by `whisper.available_models()`, or
+
+        path to a model checkpoint containing the model dimensions and the model state_dict.
+
+    device : Union[str, torch.device]
+
+        the PyTorch device to put the model into
+
+    download_root: str
+
+        path to download the model files; by default, it uses ""~/.cache/whisper""
+
+    in_memory: bool
+
+        whether to preload the model weights into host memory
+
+
+
+    Returns
+
+    -------
+
+    model : Whisper
+
+        The Whisper ASR model instance
+
+    """"""
+
+
+
+    if device is None:
+
+        device = ""cuda"" if torch.cuda.is_available() else ""cpu""
+
+    if download_root is None:
+
+        default = os.path.join(os.path.expanduser(""~""), "".cache"")
+
+        download_root = os.path.join(os.getenv(""XDG_CACHE_HOME"", default), ""whisper"")
+
+
+
+    if name in _MODELS:
+
+        checkpoint_file = _download(_MODELS[name], download_root, in_memory)
+
+        alignment_heads = _ALIGNMENT_HEADS[name]
+
+    elif os.path.isfile(name):
+
+        checkpoint_file = open(name, ""rb"").read() if in_memory else name
+
+        alignment_heads = None
+
+    else:
+
+        raise RuntimeError(
+
+            f""Model {name} not found; available models = {available_models()}""
+
+        )
+
+
+
+    with (
+
+        io.BytesIO(checkpoint_file) if in_memory else open(checkpoint_file, ""rb"")
+
+    ) as fp:
+
+        kwargs = {""weights_only"": True} if torch.__version__ >= ""1.13"" else {}
+
+        checkpoint = torch.load(fp, map_location=device, **kwargs)
+
+    del checkpoint_file
+
+
+
+    dims = ModelDimensions(**checkpoint[""dims""])
+
+    model = Whisper(dims)
+
+    model.load_state_dict(checkpoint[""model_state_dict""])
+
+
+
+    if alignment_heads is not None:
+
+        model.set_alignment_heads(alignment_heads)
+
+
+
+    return model.to(device)
+","def load_model(name: str, device: Optional[Union[str, torch.device]] = None, download_root: str = None, in_memory: bool = False) -> Whisper:
+    if device is None:
+        device = ""cuda"" if torch.cuda.is_available() else ""cpu""
+    if download_root is None:
+        default = os.path.join(os.path.expanduser(""~""), "".cache"")
+        download_root = os.path.join(os.getenv(""XDG_CACHE_HOME"", default), ""whisper"")
+
+    checkpoint_file, alignment_heads = None, None
+
+    if name in _MODELS:
+        checkpoint_file = _download(_MODELS[name], download_root, in_memory)
+        alignment_heads = _ALIGNMENT_HEADS[name]
+    elif os.path.isfile(name):
+        checkpoint_file = open(name, ""rb"").read() if in_memory else name
+    else:
+        raise RuntimeError(f""Model {name} not found; available models = {available_models()}"")
+
+    with (io.BytesIO(checkpoint_file) if in_memory else open(checkpoint_file, ""rb"")) as fp:
+        checkpoint = torch.load(fp, map_location=device, weights_only=True) if torch.__version__ >= ""1.13"" else torch.load(fp, map_location=device)
+    
+    dims = ModelDimensions(**checkpoint[""dims""])
+    model = Whisper(dims)
+    model.load_state_dict(checkpoint[""model_state_dict""])
+
+    if alignment_heads is not None:
+        model.set_alignment_heads(alignment_heads)
+
+    return model.to(device)",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,0,13.6784
+"def __init__(self, dims: ModelDimensions):
+
+    super().__init__()
+
+    self.dims = dims
+
+    self.encoder = AudioEncoder(
+
+        self.dims.n_mels,
+
+        self.dims.n_audio_ctx,
+
+        self.dims.n_audio_state,
+
+        self.dims.n_audio_head,
+
+        self.dims.n_audio_layer,
+
+    )
+
+    self.decoder = TextDecoder(
+
+        self.dims.n_vocab,
+
+        self.dims.n_text_ctx,
+
+        self.dims.n_text_state,
+
+        self.dims.n_text_head,
+
+        self.dims.n_text_layer,
+
+    )
+
+    # use the last half among the decoder layers for time alignment by default;
+
+    # to use a specific set of heads, see `set_alignment_heads()` below.
+
+    all_heads = torch.zeros(
+
+        self.dims.n_text_layer, self.dims.n_text_head, dtype=torch.bool
+
+    )
+
+    all_heads[self.dims.n_text_layer // 2 :] = True
+
+    self.register_buffer(""alignment_heads"", all_heads.to_sparse(), persistent=False)
+","def __init__(self, dims: ModelDimensions):
+    super().__init__()
+    self.dims = dims
+    self.encoder = AudioEncoder(*(
+        getattr(self.dims, attr) for attr in (
+            ""n_mels"", ""n_audio_ctx"", ""n_audio_state"", ""n_audio_head"", ""n_audio_layer"",
+        )
+    ))
+    self.decoder = TextDecoder(*(
+        getattr(self.dims, attr) for attr in (
+            ""n_vocab"", ""n_text_ctx"", ""n_text_state"", ""n_text_head"", ""n_text_layer"",
+        )
+    ))
+    alignment_heads = torch.zeros(self.dims.n_text_layer, self.dims.n_text_head, dtype=torch.bool)
+    alignment_heads[self.dims.n_text_layer // 2 :] = True
+    self.register_buffer(""alignment_heads"", alignment_heads.to_sparse(), persistent=False)",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,0,13.6784
+"def median_filter_cuda(x: torch.Tensor, filter_width: int):
+
+    """"""Apply a median filter of given width along the last dimension of x""""""
+
+    slices = x.contiguous().unfold(-1, filter_width, 1)
+
+    grid = np.prod(slices.shape[:-2])
+
+
+
+    kernel = median_kernel(filter_width)
+
+    y = torch.empty_like(slices[..., 0])
+
+
+
+    BLOCK_SIZE = 1 << (y.stride(-2) - 1).bit_length()
+
+    kernel[(grid,)](y, x, x.stride(-2), y.stride(-2), BLOCK_SIZE=BLOCK_SIZE)
+
+
+
+    return y
+","def median_filter_cuda(x: torch.Tensor, filter_width: int):
+    slices = x.unfold(-1, filter_width, 1)
+    flattened_slices = slices.reshape(-1, slices.size(-1))
+    sorted_slices, _ = flattened_slices.sort(dim=-1)
+    median = sorted_slices[:, filter_width // 2]
+    return median.reshape(x.shape[:-1] + (-1,))",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,5,13.6784
+"@lru_cache(maxsize=None)
+
+def get_tokenizer(
+
+    multilingual: bool,
+
+    *,
+
+    num_languages: int = 99,
+
+    language: Optional[str] = None,
+
+    task: Optional[str] = None,  # Literal[""transcribe"", ""translate"", None]
+
+) -> Tokenizer:
+
+    if language is not None:
+
+        language = language.lower()
+
+        if language not in LANGUAGES:
+
+            if language in TO_LANGUAGE_CODE:
+
+                language = TO_LANGUAGE_CODE[language]
+
+            else:
+
+                raise ValueError(f""Unsupported language: {language}"")
+
+
+
+    if multilingual:
+
+        encoding_name = ""multilingual""
+
+        language = language or ""en""
+
+        task = task or ""transcribe""
+
+    else:
+
+        encoding_name = ""gpt2""
+
+        language = None
+
+        task = None
+
+
+
+    encoding = get_encoding(name=encoding_name, num_languages=num_languages)
+
+
+
+    return Tokenizer(
+
+        encoding=encoding, num_languages=num_languages, language=language, task=task
+
+    )
+","@lru_cache(maxsize=None)
+def get_tokenizer(
+    multilingual: bool,
+    *,
+    num_languages: int = 99,
+    language: Optional[str] = None,
+    task: Optional[str] = None
+) -> Tokenizer:
+    if language is not None:
+        language = language.lower()
+        language = TO_LANGUAGE_CODE.get(language, language)
+        if language not in LANGUAGES:
+            raise ValueError(f""Unsupported language: {language}"")
+
+    encoding_name = ""multilingual"" if multilingual else ""gpt2""
+    language = language if multilingual else None
+    task = task or (""transcribe"" if multilingual else None)
+
+    encoding = get_encoding(name=encoding_name, num_languages=num_languages)
+
+    return Tokenizer(encoding=encoding, num_languages=num_languages, language=language, task=task)",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,0,13.6784
+"def encode(self, text, **kwargs):
+
+    return self.encoding.encode(text, **kwargs)
+","def encode(self, text, **kwargs):
+    return self.encoding.encode(text, **kwargs)",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,0,13.6784
+"@lru_cache(maxsize=None)
+
+def get_encoding(name: str = ""gpt2"", num_languages: int = 99):
+
+    vocab_path = os.path.join(os.path.dirname(__file__), ""assets"", f""{name}.tiktoken"")
+
+    ranks = {
+
+        base64.b64decode(token): int(rank)
+
+        for token, rank in (line.split() for line in open(vocab_path) if line)
+
+    }
+
+    n_vocab = len(ranks)
+
+    special_tokens = {}
+
+
+
+    specials = [
+
+        ""<|endoftext|>"",
+
+        ""<|startoftranscript|>"",
+
+        *[f""<|{lang}|>"" for lang in list(LANGUAGES.keys())[:num_languages]],
+
+        ""<|translate|>"",
+
+        ""<|transcribe|>"",
+
+        ""<|startoflm|>"",
+
+        ""<|startofprev|>"",
+
+        ""<|nospeech|>"",
+
+        ""<|notimestamps|>"",
+
+        *[f""<|{i * 0.02:.2f}|>"" for i in range(1501)],
+
+    ]
+
+
+
+    for token in specials:
+
+        special_tokens[token] = n_vocab
+
+        n_vocab += 1
+
+
+
+    return tiktoken.Encoding(
+
+        name=os.path.basename(vocab_path),
+
+        explicit_n_vocab=n_vocab,
+
+        pat_str=r""""""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""""",
+
+        mergeable_ranks=ranks,
+
+        special_tokens=special_tokens,
+
+    )
+","from functools import lru_cache
+import os, base64
+
+@lru_cache(maxsize=None)
+def get_encoding(name: str = ""gpt2"", num_languages: int = 99):
+    vocab_path = os.path.join(os.path.dirname(__file__), ""assets"", f""{name}.tiktoken"")
+    with open(vocab_path, 'r') as file:
+        ranks = {
+            base64.b64decode(token): int(rank)
+            for line in file if line.strip()
+            for token, rank in [line.split()]
+        }
+
+    n_vocab = len(ranks)
+    special_tokens = {}
+
+    lang_tokens = [f""<|{lang}|>"" for lang in list(LANGUAGES.keys())[:num_languages]]
+    time_tokens = [f""<|{i * 0.02:.2f}|>"" for i in range(1501)]
+
+    specials = [
+        ""<|endoftext|>"", ""<|startoftranscript|>"", ""<|translate|>"",
+        ""<|transcribe|>"", ""<|startoflm|>"", ""<|startofprev|>"",
+        ""<|nospeech|>"", ""<|notimestamps|>"",
+        *lang_tokens, *time_tokens
+    ]
+
+    for token in specials:
+        special_tokens[token] = n_vocab
+        n_vocab += 1
+
+    return tiktoken.Encoding(
+        name=os.path.basename(vocab_path),
+        explicit_n_vocab=n_vocab,
+        pat_str=r""''s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"",
+        mergeable_ranks=ranks,
+        special_tokens=special_tokens,
+    )",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,0,13.6784
+"def _download(url: str, root: str, in_memory: bool) -> Union[bytes, str]:
+
+    os.makedirs(root, exist_ok=True)
+
+
+
+    expected_sha256 = url.split(""/"")[-2]
+
+    download_target = os.path.join(root, os.path.basename(url))
+
+
+
+    if os.path.exists(download_target) and not os.path.isfile(download_target):
+
+        raise RuntimeError(f""{download_target} exists and is not a regular file"")
+
+
+
+    if os.path.isfile(download_target):
+
+        with open(download_target, ""rb"") as f:
+
+            model_bytes = f.read()
+
+        if hashlib.sha256(model_bytes).hexdigest() == expected_sha256:
+
+            return model_bytes if in_memory else download_target
+
+        else:
+
+            warnings.warn(
+
+                f""{download_target} exists, but the SHA256 checksum does not match; re-downloading the file""
+
+            )
+
+
+
+    with urllib.request.urlopen(url) as source, open(download_target, ""wb"") as output:
+
+        with tqdm(
+
+            total=int(source.info().get(""Content-Length"")),
+
+            ncols=80,
+
+            unit=""iB"",
+
+            unit_scale=True,
+
+            unit_divisor=1024,
+
+        ) as loop:
+
+            while True:
+
+                buffer = source.read(8192)
+
+                if not buffer:
+
+                    break
+
+
+
+                output.write(buffer)
+
+                loop.update(len(buffer))
+
+
+
+    model_bytes = open(download_target, ""rb"").read()
+
+    if hashlib.sha256(model_bytes).hexdigest() != expected_sha256:
+
+        raise RuntimeError(
+
+            ""Model has been downloaded but the SHA256 checksum does not not match. Please retry loading the model.""
+
+        )
+
+
+
+    return model_bytes if in_memory else download_target
+","from typing import Union
+import os
+import hashlib
+import warnings
+import urllib.request
+from tqdm import tqdm
+
+def _download(url: str, root: str, in_memory: bool) -> Union[bytes, str]:
+    os.makedirs(root, exist_ok=True)
+
+    expected_sha256 = url.split(""/"")[-2]
+    download_target = os.path.join(root, os.path.basename(url))
+
+    if os.path.exists(download_target):
+        if os.path.isfile(download_target):
+            with open(download_target, ""rb"") as f:
+                model_bytes = f.read()
+            if hashlib.sha256(model_bytes).hexdigest() == expected_sha256:
+                return model_bytes if in_memory else download_target
+            else:
+                warnings.warn(
+                    f""{download_target} exists, but the SHA256 checksum does not match; re-downloading the file"")
+        else:
+            raise RuntimeError(f""{download_target} exists and is not a regular file"")
+
+    with urllib.request.urlopen(url) as source:
+        content_length = int(source.info().get(""Content-Length""))
+        with open(download_target, ""wb"") as output, tqdm(
+                total=content_length, ncols=80, unit=""iB"", 
+                unit_scale=True, unit_divisor=1024) as loop:
+            for buffer in iter(lambda: source.read(8192), b''):
+                output.write(buffer)
+                loop.update(len(buffer))
+
+    with open(download_target, ""rb"") as f:
+        model_bytes = f.read()
+
+    if hashlib.sha256(model_bytes).hexdigest() != expected_sha256:
+        os.remove(download_target)
+        raise RuntimeError(
+            ""Model has been downloaded but the SHA256 checksum does not match. Please retry loading the model."")
+
+    return model_bytes if in_memory else download_target
+",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,0,13.6784
+"def load_audio(file: str, sr: int = SAMPLE_RATE):
+
+    """"""
+
+    Open an audio file and read as mono waveform, resampling as necessary
+
+
+
+    Parameters
+
+    ----------
+
+    file: str
+
+        The audio file to open
+
+
+
+    sr: int
+
+        The sample rate to resample the audio if necessary
+
+
+
+    Returns
+
+    -------
+
+    A NumPy array containing the audio waveform, in float32 dtype.
+
+    """"""
+
+
+
+    # This launches a subprocess to decode audio while down-mixing
+
+    # and resampling as necessary.  Requires the ffmpeg CLI in PATH.
+
+    # fmt: off
+
+    cmd = [
+
+        ""ffmpeg"",
+
+        ""-nostdin"",
+
+        ""-threads"", ""0"",
+
+        ""-i"", file,
+
+        ""-f"", ""s16le"",
+
+        ""-ac"", ""1"",
+
+        ""-acodec"", ""pcm_s16le"",
+
+        ""-ar"", str(sr),
+
+        ""-""
+
+    ]
+
+    # fmt: on
+
+    try:
+
+        out = run(cmd, capture_output=True, check=True).stdout
+
+    except CalledProcessError as e:
+
+        raise RuntimeError(f""Failed to load audio: {e.stderr.decode()}"") from e
+
+
+
+    return np.frombuffer(out, np.int16).flatten().astype(np.float32) / 32768.0
+","def load_audio(file: str, sr: int = SAMPLE_RATE):
+    cmd = [
+        ""ffmpeg"",
+        ""-nostdin"",
+        ""-threads"", ""0"",
+        ""-i"", file,
+        ""-f"", ""f32le"",
+        ""-ac"", ""1"",
+        ""-ar"", str(sr),
+        ""-"",
+    ]
+
+    try:
+        out = run(cmd, capture_output=True, check=True).stdout
+    except CalledProcessError as e:
+        raise RuntimeError(f""Failed to load audio: {e.stderr.decode()}"") from e
+
+    return np.frombuffer(out, np.float32)",whisper,4o,"Let's optimize the following code step by step:
+
+Please follow these reasoning steps:
+1. First, analyze the current code to identify performance bottlenecks
+2. Consider different optimization strategies (algorithmic, data structure, loop optimization, etc.)
+3. Evaluate the trade-offs of each approach
+4. Select the best optimization strategy
+5. Implement the optimized version
+
+Think through each step, then provide only the final optimized code.",COT,0,13.6784
+"def median_filter(x: torch.Tensor, filter_width: int):
+
+    """"""Apply a median filter of width `filter_width` along the last dimension of `x`""""""
+
+    pad_width = filter_width // 2
+
+    if x.shape[-1] <= pad_width:
+
+        # F.pad requires the padding width to be smaller than the input dimension
+
+        return x
+
+
+
+    if (ndim := x.ndim) <= 2:
+
+        # `F.pad` does not support 1D or 2D inputs for reflect padding but supports 3D and 4D
+
+        x = x[None, None, :]
+
+
+
+    assert (
+
+        filter_width > 0 and filter_width % 2 == 1
+
+    ), ""`filter_width` should be an odd number""
+
+
+
+    result = None
+
+    x = F.pad(x, (filter_width // 2, filter_width // 2, 0, 0), mode=""reflect"")
+
+    if x.is_cuda:
+
+        try:
+
+            from .triton_ops import median_filter_cuda
+
+
+
+            result = median_filter_cuda(x, filter_width)
+
+        except (RuntimeError, subprocess.CalledProcessError):
+
+            warnings.warn(
+
+                ""Failed to launch Triton kernels, likely due to missing CUDA toolkit; ""
+
+                ""falling back to a slower median kernel implementation...""
+
+            )
+
+
+
+    if result is None:
+
+        # sort() is faster than torch.median (https://github.com/pytorch/pytorch/issues/51450)
+
+        result = x.unfold(-1, filter_width, 1).sort()[0][..., filter_width // 2]
+
+
+
+    if ndim <= 2:
+
+        result = result[0, 0]
+
+
+
+    return result
+","def median_filter(x: torch.Tensor, filter_width: int):
+    pad_width = filter_width // 2
+    if x.shape[-1] <= pad_width:
+        return x
+
+    if (ndim := x.ndim) <= 2:
+        x = x.unsqueeze(0).unsqueeze(0)
+
+    assert filter_width > 0 and filter_width % 2 == 1, ""`filter_width` should be an odd number""
+
+    x = F.pad(x, (pad_width, pad_width, 0, 0), mode=""reflect"")
+    result = None
+
+    if x.is_cuda:
+        try:
+            from .triton_ops import median_filter_cuda
+            result = median_filter_cuda(x, filter_width)
+        except (RuntimeError, subprocess.CalledProcessError):
+            warnings.warn(
+                ""Failed to launch Triton kernels, likely due to missing CUDA toolkit; ""
+                ""falling back to a slower median kernel implementation...""
+            )
+
+    if result is None:
+        result = x.unfold(-1, filter_width, 1).contiguous().sort()[0][..., pad_width]
+
+    if ndim <= 2:
+        result = result[0, 0]
+
+    return result",whisper,4o,"You are an expert in code optimization. Please optimize the provided code for Optimize the specific code object provided. Return ONLY the optimized version of that object, preserving its exact signature and interface. Do not recreate parent classes or surrounding code.. Consider the project context, task context, and adapt your optimization approach accordingly.
+
+## Project Context
+Project Name: whisper
+Project Description: Robust Speech Recognition via Large-Scale Weak Supervision
+Primary Languages: Python
+
+## Task Context
+- Description: Synthesize a single, best-runtime optimized version of the given object, preserving its signature.
+- Considerations: Algorithmic complexity and big O notation; data structures and their efficiency; loop optimizations and redundant iterations; memory access patterns and cache utilization; I/O operations and system calls; parallel processing and multi-threading; redundant computations
+
+## Target LLM Context
+- Target Model: gpt-4-o
+- Considerations: Focus on complex interdependencies and comprehensive optimization across the codebase, internally verify assumptions and performance metrics from the task description before proposing changes, consider memory and cache behavior vectorization and system level factors with thorough reasoning",BASE,0,0
+"def dtw_cuda(x, BLOCK_SIZE=1024):
+
+    from .triton_ops import dtw_kernel
+
+
+
+    M, N = x.shape
+
+    assert M < BLOCK_SIZE, f""M should be smaller than {BLOCK_SIZE=}""
+
+
+
+    x_skew = (
+
+        F.pad(x, (0, M + 1), value=np.inf).flatten()[: M * (N + M)].reshape(M, N + M)
+
+    )
+
+    x_skew = x_skew.T.contiguous()
+
+    cost = torch.ones(N + M + 2, M + 2) * np.inf
+
+    cost[0, 0] = 0
+
+    cost = cost.to(x.device)
+
+    trace = torch.zeros_like(cost, dtype=torch.int32)
+
+
+
+    dtw_kernel[(1,)](
+
+        cost,
+
+        trace,
+
+        x_skew,
+
+        x_skew.stride(0),
+
+        cost.stride(0),
+
+        trace.stride(0),
+
+        N,
+
+        M,
+
+        BLOCK_SIZE=BLOCK_SIZE,
+
+    )
+
+
+
+    trace = trace.T.flatten()[: (M + 1) * (M + N + 3)].reshape(M + 1, M + N + 3)[
+
+        :, : N + 1
+
+    ]
+
+    return backtrace(trace.cpu().numpy())
+","def dtw_cuda(x, BLOCK_SIZE=1024):
+    from .triton_ops import dtw_kernel
+    M, N = x.shape
+    assert M < BLOCK_SIZE, f""M should be smaller than {BLOCK_SIZE=}""
+
+    x_skew = F.pad(x, (0, M + 1), value=np.inf).flatten()[: M * (N + M)].reshape(M, N + M).T.contiguous()
+    cost = torch.full((N + M + 2, M + 2), np.inf, device=x.device)
+    cost[0, 0] = 0
+    trace = torch.zeros_like(cost, dtype=torch.int32)
+
+    dtw_kernel[(1,)](
+        cost,
+        trace,
+        x_skew,
+        x_skew.stride(0),
+        cost.stride(0),
+        trace.stride(0),
+        N,
+        M,
+        BLOCK_SIZE=BLOCK_SIZE,
+    )
+
+    trace = trace.T.flatten()[: (M + 1) * (M + N + 3)].reshape(M + 1, M + N + 3)[:, : N + 1]
+
+    return backtrace(trace.cpu().numpy())",whisper,4o,"You are an expert in code optimization. Please optimize the provided code for Optimize the specific code object provided. Return ONLY the optimized version of that object, preserving its exact signature and interface. Do not recreate parent classes or surrounding code.. Consider the project context, task context, and adapt your optimization approach accordingly.
+
+## Project Context
+Project Name: whisper
+Project Description: Robust Speech Recognition via Large-Scale Weak Supervision
+Primary Languages: Python
+
+## Task Context
+- Description: Synthesize a single, best-runtime optimized version of the given object, preserving its signature.
+- Considerations: Algorithmic complexity and big O notation; data structures and their efficiency; loop optimizations and redundant iterations; memory access patterns and cache utilization; I/O operations and system calls; parallel processing and multi-threading; redundant computations
+
+## Target LLM Context
+- Target Model: gpt-4-o
+- Considerations: Focus on complex interdependencies and comprehensive optimization across the codebase, internally verify assumptions and performance metrics from the task description before proposing changes, consider memory and cache behavior vectorization and system level factors with thorough reasoning",BASE,1,0
+"def load_model(
+
+    name: str,
+
+    device: Optional[Union[str, torch.device]] = None,
+
+    download_root: str = None,
+
+    in_memory: bool = False,
+
+) -> Whisper:
+
+    """"""
+
+    Load a Whisper ASR model
+
+
+
+    Parameters
+
+    ----------
+
+    name : str
+
+        one of the official model names listed by `whisper.available_models()`, or
+
+        path to a model checkpoint containing the model dimensions and the model state_dict.
+
+    device : Union[str, torch.device]
+
+        the PyTorch device to put the model into
+
+    download_root: str
+
+        path to download the model files; by default, it uses ""~/.cache/whisper""
+
+    in_memory: bool
+
+        whether to preload the model weights into host memory
+
+
+
+    Returns
+
+    -------
+
+    model : Whisper
+
+        The Whisper ASR model instance
+
+    """"""
+
+
+
+    if device is None:
+
+        device = ""cuda"" if torch.cuda.is_available() else ""cpu""
+
+    if download_root is None:
+
+        default = os.path.join(os.path.expanduser(""~""), "".cache"")
+
+        download_root = os.path.join(os.getenv(""XDG_CACHE_HOME"", default), ""whisper"")
+
+
+
+    if name in _MODELS:
+
+        checkpoint_file = _download(_MODELS[name], download_root, in_memory)
+
+        alignment_heads = _ALIGNMENT_HEADS[name]
+
+    elif os.path.isfile(name):
+
+        checkpoint_file = open(name, ""rb"").read() if in_memory else name
+
+        alignment_heads = None
+
+    else:
+
+        raise RuntimeError(
+
+            f""Model {name} not found; available models = {available_models()}""
+
+        )
+
+
+
+    with (
+
+        io.BytesIO(checkpoint_file) if in_memory else open(checkpoint_file, ""rb"")
+
+    ) as fp:
+
+        kwargs = {""weights_only"": True} if torch.__version__ >= ""1.13"" else {}
+
+        checkpoint = torch.load(fp, map_location=device, **kwargs)
+
+    del checkpoint_file
+
+
+
+    dims = ModelDimensions(**checkpoint[""dims""])
+
+    model = Whisper(dims)
+
+    model.load_state_dict(checkpoint[""model_state_dict""])
+
+
+
+    if alignment_heads is not None:
+
+        model.set_alignment_heads(alignment_heads)
+
+
+
+    return model.to(device)
+","def load_model(name: str, device: Optional[Union[str, torch.device]] = None, download_root: str = None, in_memory: bool = False) -> Whisper:
+    if device is None:
+        device = ""cuda"" if torch.cuda.is_available() else ""cpu""
+    if download_root is None:
+        default = os.path.join(os.path.expanduser(""~""), "".cache"")
+        download_root = os.path.join(os.getenv(""XDG_CACHE_HOME"", default), ""whisper"")
+
+    if name in _MODELS:
+        checkpoint_file, alignment_heads = _download(_MODELS[name], download_root, in_memory), _ALIGNMENT_HEADS[name]
+    elif os.path.isfile(name):
+        checkpoint_file, alignment_heads = open(name, ""rb"").read() if in_memory else name, None
+    else:
+        raise RuntimeError(f""Model {name} not found; available models = {available_models()}"")
+
+    with (io.BytesIO(checkpoint_file) if in_memory else open(checkpoint_file, ""rb"")) as fp:
+        kwargs = {""weights_only"": True} if torch.__version__ >= ""1.13"" else {}
+        checkpoint = torch.load(fp, map_location=device, **kwargs)
+    del checkpoint_file
+
+    dims = ModelDimensions(**checkpoint[""dims""])
+    model = Whisper(dims)
+    model.load_state_dict(checkpoint[""model_state_dict""])
+
+    if alignment_heads is not None:
+        model.set_alignment_heads(alignment_heads)
+
+    return model.to(device)",whisper,4o,"You are an expert in code optimization. Please optimize the provided code for Optimize the specific code object provided. Return ONLY the optimized version of that object, preserving its exact signature and interface. Do not recreate parent classes or surrounding code.. Consider the project context, task context, and adapt your optimization approach accordingly.
+
+## Project Context
+Project Name: whisper
+Project Description: Robust Speech Recognition via Large-Scale Weak Supervision
+Primary Languages: Python
+
+## Task Context
+- Description: Synthesize a single, best-runtime optimized version of the given object, preserving its signature.
+- Considerations: Algorithmic complexity and big O notation; data structures and their efficiency; loop optimizations and redundant iterations; memory access patterns and cache utilization; I/O operations and system calls; parallel processing and multi-threading; redundant computations
+
+## Target LLM Context
+- Target Model: gpt-4-o
+- Considerations: Focus on complex interdependencies and comprehensive optimization across the codebase, internally verify assumptions and performance metrics from the task description before proposing changes, consider memory and cache behavior vectorization and system level factors with thorough reasoning",BASE,0,0
+"def __init__(self, dims: ModelDimensions):
+
+    super().__init__()
+
+    self.dims = dims
+
+    self.encoder = AudioEncoder(
+
+        self.dims.n_mels,
+
+        self.dims.n_audio_ctx,
+
+        self.dims.n_audio_state,
+
+        self.dims.n_audio_head,
+
+        self.dims.n_audio_layer,
+
+    )
+
+    self.decoder = TextDecoder(
+
+        self.dims.n_vocab,
+
+        self.dims.n_text_ctx,
+
+        self.dims.n_text_state,
+
+        self.dims.n_text_head,
+
+        self.dims.n_text_layer,
+
+    )
+
+    # use the last half among the decoder layers for time alignment by default;
+
+    # to use a specific set of heads, see `set_alignment_heads()` below.
+
+    all_heads = torch.zeros(
+
+        self.dims.n_text_layer, self.dims.n_text_head, dtype=torch.bool
+
+    )
+
+    all_heads[self.dims.n_text_layer // 2 :] = True
+
+    self.register_buffer(""alignment_heads"", all_heads.to_sparse(), persistent=False)
+","def __init__(self, dims: ModelDimensions):
+    super().__init__()
+    self.dims = dims
+
+    self.encoder = AudioEncoder(
+        self.dims.n_mels,
+        self.dims.n_audio_ctx,
+        self.dims.n_audio_state,
+        self.dims.n_audio_head,
+        self.dims.n_audio_layer,
+    )
+
+    self.decoder = TextDecoder(
+        self.dims.n_vocab,
+        self.dims.n_text_ctx,
+        self.dims.n_text_state,
+        self.dims.n_text_head,
+        self.dims.n_text_layer,
+    )
+
+    half_text_layers = slice(self.dims.n_text_layer // 2, None)
+    all_heads = torch.zeros((self.dims.n_text_layer, self.dims.n_text_head), dtype=torch.bool)
+    all_heads[half_text_layers] = True
+
+    self.register_buffer(""alignment_heads"", all_heads.to_sparse(), persistent=False)",whisper,4o,"You are an expert in code optimization. Please optimize the provided code for Optimize the specific code object provided. Return ONLY the optimized version of that object, preserving its exact signature and interface. Do not recreate parent classes or surrounding code.. Consider the project context, task context, and adapt your optimization approach accordingly.
+
+## Project Context
+Project Name: whisper
+Project Description: Robust Speech Recognition via Large-Scale Weak Supervision
+Primary Languages: Python
+
+## Task Context
+- Description: Synthesize a single, best-runtime optimized version of the given object, preserving its signature.
+- Considerations: Algorithmic complexity and big O notation; data structures and their efficiency; loop optimizations and redundant iterations; memory access patterns and cache utilization; I/O operations and system calls; parallel processing and multi-threading; redundant computations
+
+## Target LLM Context
+- Target Model: gpt-4-o
+- Considerations: Focus on complex interdependencies and comprehensive optimization across the codebase, internally verify assumptions and performance metrics from the task description before proposing changes, consider memory and cache behavior vectorization and system level factors with thorough reasoning",BASE,0,0
