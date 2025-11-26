@@ -18,6 +18,7 @@ files = {
     'model_contexts' : "./contexts/model_contexts.json",
     'project_contexts' : "./contexts/project_contexts.json",
     'task_contexts' : "./contexts/task_contexts.json"
+    ""
 }
 
 # API keys
@@ -29,6 +30,8 @@ ANTHROPIC_KEY : str = load_json(files['api_keys'], 'ANTHROPIC_KEY')
 PROJECT_CONTEXTS : dict = load_json(files['project_contexts'])
 MODEL_CONTEXTS : dict = load_json(files['model_contexts'])
 TASK_CONTEXTS : dict = load_json(files['task_contexts'])
+
+OBJECTIVE : str = load_json('./contexts/objective.json', 'objective')
 
 del files
 

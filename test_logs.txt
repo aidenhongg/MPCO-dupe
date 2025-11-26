@@ -1,0 +1,287 @@
+Reinitializing whisper at correct path...
+Running py-spy profiler...
+GENERATED META PROMPT: 
+Optimize the following code object for best-runtime performance while preserving its signature and interface. Focus on improving algorithmic complexity, enhancing data structure efficiency, minimizing loop iterations, optimizing memory and cache usage, streamlining I/O operations, and leveraging parallel processing. Maintain the clarity and integrity of the code, ensuring all changes are backed by clear, maintainable rationale.
+
+```python
+# [Insert the specific code object here]
+```
+
+Return only the optimized code, adhering strictly to its original signature and interface, and provide brief in-line comments where necessary to elucidate optimization choices.
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+============FAULTY CODE============
+filename : whisper\triton_ops.py, startline : 105
+def median_filter_cuda(x: torch.Tensor, filter_width: int):
+    """Apply a median filter of given width along the last dimension of x"""
+    
+    # Early return for trivial cases to avoid unnecessary computation
+    if filter_width == 1:
+        return x
+    
+    # Pre-allocate output tensor with optimal memory layout
+    output_size = list(x.shape)
+    output_size[-1] = x.shape[-1] - filter_width + 1
+    y = torch.empty(output_size, dtype=x.dtype, device=x.device, memory_format=torch.contiguous_format)
+    
+    # Use view operations instead of unfold to reduce memory overhead
+    # unfold creates a new tensor view without copying data
+    slices = x.contiguous().unfold(-1, filter_width, 1)
+    
+    # Calculate grid size more efficiently using bit operations
+    # Flatten all dimensions except the last two for better memory coalescing
+    grid_size = slices.numel() // (slices.shape[-1] * slices.shape[-2])
+    
+    # Cache kernel to avoid repeated compilation overhead
+    kernel = median_kernel(filter_width)
+    
+    # Optimize block size using power-of-2 for better GPU occupancy
+    # Use the next power of 2 that's >= the stride for memory coalescing
+    stride = max(y.stride(-2), 1)  # Ensure minimum stride of 1
+    BLOCK_SIZE = 1 << (stride - 1).bit_length()
+    # Clamp block size to reasonable bounds for GPU architecture
+    BLOCK_SIZE = min(max(BLOCK_SIZE, 32), 1024)
+    
+    # Launch kernel with optimized grid configuration
+    kernel[(grid_size,)](
+        y, 
+        slices,  # Pass slices directly to avoid redundant stride calculations
+        slices.stride(-2), 
+        y.stride(-2), 
+        BLOCK_SIZE=BLOCK_SIZE
+    )
+    
+    return y
+===================================
+py-spy> Sampling process 100 times a second. Press Control-C to exit.
+
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.0.1, pluggy-1.6.0
+rootdir: c:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\pipeline\profiler\projects\whisper
+configfile: pyproject.toml
+collected 26 items
+
+projects\whisper\tests\test_audio.py F                                   [  3%]
+projects\whisper\tests\test_normalizer.py ....                           [ 19%]
+projects\whisper\tests\test_timing.py ..............FF                   [ 80%]
+projects\whisper\tests\test_tokenizer.py ....                            [ 96%]
+projects\whisper\tests\test_transcribe.py F                              [100%]
+
+================================== FAILURES ===================================
+_________________________________ test_audio __________________________________
+projects\whisper\tests\test_audio.py:10: in test_audio
+    audio = load_audio(audio_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+projects\whisper\whisper\audio.py:58: in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+E   FileNotFoundError: [WinError 2] The system cannot find the file specified
+___________________ test_median_filter_equivalence[shape2] ____________________
+projects\whisper\tests\test_timing.py:96: in test_median_filter_equivalence
+    assert np.allclose(filtered_cpu, filtered_gpu)
+E   assert False
+E    +  where False = <function allclose at 0x000002167E43FE30>(tensor([[[ 5.6850e-01,  5.6850e-01,  5.6850e-01,  ..., -6.0831e-01,\n           1.0084e+00, -6.0831e-01],\n         [ 4....1.3567e+00],\n         [-4.8871e-01, -4.8871e-01,  2.2300e-02,  ..., -1.4146e-01,\n           1.2403e+00,  2.2047e+00]]]), tensor([[[ 0.5685,  0.5685,  0.5685,  ..., -0.6083,  1.0084, -0.6083],\n         [ 0.5685,  0.5685, -0.6816,  ...,  1.0...99, -0.6364,  ...,  0.6283,  1.0154,  1.0154],\n         [-0.0699, -0.6364,  0.3490,  ...,  1.0154,  1.0154,  1.2084]]]))
+E    +    where <function allclose at 0x000002167E43FE30> = np.allclose
+___________________ test_median_filter_equivalence[shape3] ____________________
+projects\whisper\tests\test_timing.py:96: in test_median_filter_equivalence
+    assert np.allclose(filtered_cpu, filtered_gpu)
+E   assert False
+E    +  where False = <function allclose at 0x000002167E43FE30>(tensor([[[[ 7.0737e-01,  7.0737e-01,  2.4460e-01,  ...,  5.7548e-01,\n            5.7548e-01,  5.7548e-01],\n          [...103e-01],\n          [-8.1293e-01, -9.7039e-02, -8.1293e-01,  ...,  2.8887e-02,\n            2.8887e-02,  2.8887e-02]]]]), tensor([[[[ 7.0737e-01,  7.0737e-01,  2.4460e-01,  ...,  5.7548e-01,\n            5.7548e-01,  5.7548e-01],\n          [...594e-01],\n          [-2.1628e-01, -4.1600e-01, -2.1628e-01,  ..., -5.9575e-01,\n           -4.5594e-01, -1.8550e-01]]]]))
+E    +    where <function allclose at 0x000002167E43FE30> = np.allclose
+__________________________ test_transcribe[tiny.en] ___________________________
+projects\whisper\tests\test_transcribe.py:17: in test_transcribe
+    result = model.transcribe(
+projects\whisper\whisper\transcribe.py:139: in transcribe
+    mel = log_mel_spectrogram(audio, model.dims.n_mels, padding=N_SAMPLES)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+projects\whisper\whisper\audio.py:140: in log_mel_spectrogram
+    audio = load_audio(audio)
+            ^^^^^^^^^^^^^^^^^
+projects\whisper\whisper\audio.py:58: in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+E   FileNotFoundError: [WinError 2] The system cannot find the file specified
+- generated xml file: c:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\pipeline\profiler\temp\report.xml -
+=========================== short test summary info ===========================
+FAILED projects\whisper\tests\test_audio.py::test_audio - FileNotFoundError: ...
+FAILED projects\whisper\tests\test_timing.py::test_median_filter_equivalence[shape2]
+FAILED projects\whisper\tests\test_timing.py::test_median_filter_equivalence[shape3]
+FAILED projects\whisper\tests\test_transcribe.py::test_transcribe[tiny.en] - ...
+======================== 4 failed, 22 passed in 13.80s ========================
+
+py-spy> Stopped sampling because process exited
+py-spy> Wrote speedscope file to 'c:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\pipeline\profiler\profiles\whisper_profile9.speedscope'. Samples: 1351 Errors: 0
+py-spy> Visit https://www.speedscope.app/ to view
+
+1 failed optimizations : regenerating attempt...
+Optimizing...
+Running py-spy profiler...
+============FAULTY CODE============
+filename : whisper\triton_ops.py, startline : 105
+def median_filter_cuda(x: torch.Tensor, filter_width: int):
+    """Apply a median filter of given width along the last dimension of x"""
+    
+    # Pre-compute contiguous tensor to avoid repeated memory layout checks
+    x_contig = x.contiguous()
+    
+    # Use unfold with optimized memory access pattern
+    slices = x_contig.unfold(-1, filter_width, 1)
+    
+    # Cache shape computation and use bit operations for grid size
+    slice_shape = slices.shape
+    grid = slice_shape[0] * slice_shape[1] if len(slice_shape) > 2 else slice_shape[0]
+    
+    # Pre-allocate output tensor with memory-efficient layout
+    y = torch.empty(slice_shape[:-1], dtype=x.dtype, device=x.device, memory_format=torch.contiguous_format)
+    
+    # Get or cache kernel to avoid repeated compilation
+    kernel = median_kernel(filter_width)
+    
+    # Optimize block size using power-of-2 alignment and memory coalescing
+    stride_val = y.stride(-2) if y.dim() > 1 else y.stride(-1)
+    # Clamp block size to reasonable bounds for better occupancy
+    BLOCK_SIZE = min(1024, max(32, 1 << (stride_val - 1).bit_length()))
+    
+    # Launch kernel with optimized grid configuration
+    kernel[(grid,)](y, x_contig, x_contig.stride(-2), y.stride(-2), BLOCK_SIZE=BLOCK_SIZE)
+    
+    return y
+===================================
+py-spy> Sampling process 100 times a second. Press Control-C to exit.
+
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.0.1, pluggy-1.6.0
+rootdir: c:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\pipeline\profiler\projects\whisper
+configfile: pyproject.toml
+collected 26 items
+
+projects\whisper\tests\test_audio.py F                                   [  3%]
+projects\whisper\tests\test_normalizer.py ....                           [ 19%]
+projects\whisper\tests\test_timing.py ...............F                   [ 80%]
+projects\whisper\tests\test_tokenizer.py ....                            [ 96%]
+projects\whisper\tests\test_transcribe.py F                              [100%]
+
+================================== FAILURES ===================================
+_________________________________ test_audio __________________________________
+projects\whisper\tests\test_audio.py:10: in test_audio
+    audio = load_audio(audio_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+projects\whisper\whisper\audio.py:58: in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+E   FileNotFoundError: [WinError 2] The system cannot find the file specified
+___________________ test_median_filter_equivalence[shape3] ____________________
+projects\whisper\tests\test_timing.py:96: in test_median_filter_equivalence
+    assert np.allclose(filtered_cpu, filtered_gpu)
+E   assert False
+E    +  where False = <function allclose at 0x0000017F4D39FE30>(tensor([[[[ 5.1659e-01,  5.1659e-01,  4.6095e-02,  ...,  1.3227e+00,\n            1.3227e+00,  1.3227e+00],\n          [...135e-02],\n          [-2.4923e+00, -9.4116e-01, -9.4116e-01,  ..., -8.2416e-01,\n           -8.2416e-01, -1.1804e+00]]]]), tensor([[[[ 0.5166,  0.5166,  0.0461,  ...,  1.3227,  1.3227,  1.3227],\n          [-0.2443,  1.1702,  1.1702,  ..., -0...,  0.0000,  ...,  0.0000,  0.0000,  0.0000],\n          [ 0.0000,  0.0000,  0.0000,  ...,  0.0000,  0.0000,  0.0000]]]]))
+E    +    where <function allclose at 0x0000017F4D39FE30> = np.allclose
+__________________________ test_transcribe[tiny.en] ___________________________
+projects\whisper\tests\test_transcribe.py:17: in test_transcribe
+    result = model.transcribe(
+projects\whisper\whisper\transcribe.py:139: in transcribe
+    mel = log_mel_spectrogram(audio, model.dims.n_mels, padding=N_SAMPLES)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+projects\whisper\whisper\audio.py:140: in log_mel_spectrogram
+    audio = load_audio(audio)
+            ^^^^^^^^^^^^^^^^^
+projects\whisper\whisper\audio.py:58: in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+E   FileNotFoundError: [WinError 2] The system cannot find the file specified
+- generated xml file: c:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\pipeline\profiler\temp\report.xml -
+=========================== short test summary info ===========================
+FAILED projects\whisper\tests\test_audio.py::test_audio - FileNotFoundError: ...
+FAILED projects\whisper\tests\test_timing.py::test_median_filter_equivalence[shape3]
+FAILED projects\whisper\tests\test_transcribe.py::test_transcribe[tiny.en] - ...
+======================== 3 failed, 23 passed in 12.35s ========================
+
+py-spy> Stopped sampling because process exited
+py-spy> Wrote speedscope file to 'c:\Users\aiden\OneDrive\Desktop\personalprojects\ahmedlab\MPCO-dupe\pipeline\profiler\profiles\whisper_profile9.speedscope'. Samples: 1324 Errors: 0
+py-spy> Visit https://www.speedscope.app/ to view
+
+2 failed optimizations : regenerating attempt...
+Optimizing...
+Running py-spy profiler...
+Optimizing...
+Running py-spy profiler...
+Optimizations generated - benchmarking...
+Running py-spy profiler...
+Benchmark 1 complete with duration 15.587
+Running py-spy profiler...
+Benchmark 2 complete with duration 15.676
+Running py-spy profiler...
+Benchmark 3 complete with duration 16.002
+Running py-spy profiler...
+Benchmark 4 complete with duration 15.331
+Running py-spy profiler...
+Benchmark 5 complete with duration 15.481
+Running py-spy profiler...
+Benchmark 6 complete with duration 15.141
+Running py-spy profiler...
+Benchmark 7 complete with duration 16.002
+Running py-spy profiler...
+Benchmark 8 complete with duration 15.533
+Running py-spy profiler...
+Benchmark 9 complete with duration 15.167
+Running py-spy profiler...
+Benchmark 10 complete with duration 15.538
+
+Done with MP prompting - moving to next prompt type for project whisper with optimizer 40
+
+Optimizing...
+Running py-spy profiler...
+Tests halted - speedscope saved
+Error during optimization loop: 
+
+Done with FS prompting - moving to next prompt type for project whisper with optimizer 40
+
+Optimizing...
+Error during optimization loop: 
+
+Done with COT prompting - moving to next prompt type for project whisper with optimizer 40
+

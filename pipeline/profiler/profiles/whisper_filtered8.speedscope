@@ -3,10 +3,10 @@
   "profiles": [
     {
       "type": "sampled",
-      "name": "Process 15856 Thread 20000 \"MainThread\"",
+      "name": "Process 18892 Thread 12380 \"MainThread\"",
       "unit": "seconds",
       "startValue": 0.0,
-      "endValue": 13.34,
+      "endValue": 14.22,
       "samples": [
         [
           0
@@ -15,30 +15,6 @@
           1
         ],
         [
-          1
-        ],
-        [
-          1
-        ],
-        [
-          1
-        ],
-        [
-          1
-        ],
-        [
-          1
-        ],
-        [
-          1
-        ],
-        [
-          1
-        ],
-        [
-          1
-        ],
-        [
           2
         ],
         [
@@ -73,102 +49,6 @@
         ],
         [
           3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
-        ],
-        [
-          4
         ],
         [
           4
@@ -219,815 +99,1147 @@
           5
         ],
         [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
-          6
+          5
         ],
         [
           6
         ],
         [
-          8,
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          6
+        ],
+        [
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
           10,
           9
         ],
         [
-          8,
+          10,
+          9
+        ],
+        [
           7
         ],
         [
-          8,
           7
         ],
         [
-          8,
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
           7
         ],
         [
-          6
+          7
         ],
         [
-          6
+          8
         ],
         [
-          6
+          8
         ],
         [
-          6
+          8
         ],
         [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          7
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          10,
+          9
+        ],
+        [
+          10,
+          9
+        ],
+        [
+          7
+        ],
+        [
+          7
+        ],
+        [
+          7
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          8
+        ],
+        [
+          12,
           11
         ],
         [
-          6
+          12,
+          11
         ],
         [
-          6
+          12,
+          11
         ],
         [
-          6
+          12,
+          13
         ],
         [
-          6
+          12,
+          11
         ],
         [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          8,
-          7
-        ],
-        [
-          13,
-          12
-        ],
-        [
-          13,
-          12
-        ],
-        [
-          13,
+          12,
           14
         ],
         [
-          13,
-          14
-        ],
-        [
-          13,
-          14
-        ],
-        [
-          13,
-          14
-        ],
-        [
-          13,
+          12,
           15
         ],
         [
-          13,
-          16
+          12,
+          11
         ],
         [
-          13,
-          17
-        ],
-        [
-          13,
-          17
-        ],
-        [
-          13,
-          17
-        ],
-        [
-          13,
-          17
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
+          12,
           13
         ],
         [
-          13,
-          16
+          12,
+          11
         ],
         [
-          13,
-          17
-        ],
-        [
-          13,
-          17
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
+          12,
           13
         ],
         [
+          12,
+          11
+        ],
+        [
+          12,
+          15
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          16
+        ],
+        [
+          18,
+          17
+        ],
+        [
+          18,
+          17
+        ],
+        [
+          18,
+          17
+        ],
+        [
+          18,
+          20,
           19
         ],
         [
-          19
+          18,
+          17
         ],
         [
-          19
+          21
         ],
         [
-          19
+          21
         ],
         [
-          19
+          21
         ],
         [
-          19
+          21
         ],
         [
-          19
+          21
         ],
         [
-          19
+          21
         ],
         [
-          19
+          21
         ],
         [
-          21,
-          20
-        ],
-        [
-          21,
+          25,
+          24,
+          23,
           22
         ],
         [
-          21,
-          20
-        ],
-        [
-          21,
-          22
-        ],
-        [
-          23
-        ],
-        [
-          23
-        ],
-        [
-          23
-        ],
-        [
-          23
-        ],
-        [
-          23
-        ],
-        [
-          23
-        ],
-        [
-          27,
-          26,
           25,
-          24
+          27,
+          26
         ],
         [
-          27,
-          26,
           25,
-          24
+          27,
+          26
         ],
         [
-          27,
-          26,
           25,
-          24
+          27,
+          26
         ],
         [
-          27,
-          26,
           25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          26
+        ],
+        [
+          25,
+          27,
+          30,
           29,
           28
         ],
         [
-          27,
-          26,
           25,
+          27,
+          30,
+          29,
+          31
+        ],
+        [
+          25,
+          27,
+          30,
+          22
+        ],
+        [
+          25,
+          27,
+          30,
+          32,
+          31
+        ],
+        [
+          25,
+          27,
+          30,
           29,
           28
         ],
         [
-          27,
-          26,
-          25,
-          29,
-          30
+          33
         ],
         [
-          27,
-          26,
-          25,
-          24
+          33
         ],
         [
-          27,
-          32,
-          31
+          33
         ],
         [
-          27,
-          32,
-          31
+          33
         ],
         [
-          27,
-          32,
-          31
+          33
         ],
         [
-          27,
-          32,
-          31
+          33
         ],
         [
-          27,
-          32,
-          31
+          33
         ],
         [
-          27,
-          32,
-          31
+          33
         ],
         [
-          27,
-          32,
-          31
+          34
         ],
         [
-          27,
-          32,
-          31
+          34
         ],
         [
-          27,
-          32,
-          31
+          34
         ],
         [
-          27,
-          32,
-          31
+          34
         ],
         [
-          27,
-          32,
-          31
+          34
         ],
         [
-          27,
-          32,
-          31
-        ],
-        [
-          27,
-          32,
-          34,
-          33,
-          30
-        ],
-        [
-          27,
-          32,
-          34,
-          33,
+          37,
+          36,
           35
-        ],
-        [
-          36
-        ],
-        [
-          36
-        ],
-        [
-          36
-        ],
-        [
-          36
-        ],
-        [
-          36
-        ],
-        [
-          37
-        ],
-        [
-          37
-        ],
-        [
-          37
-        ],
-        [
-          39,
-          38,
-          0
         ]
       ],
       "weights": [
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
         0.01,
         0.01,
         0.01,
@@ -1338,87 +1550,93 @@
   "shared": {
     "frames": [
       {
-        "name": "load_audio",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\audio.py",
-        "line": 58,
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
+        "line": 459,
+        "col": null
+      },
+      {
+        "name": "__call__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
+        "line": 548,
         "col": null
       },
       {
         "name": "dtw_cuda",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 135,
+        "line": 125,
         "col": null
       },
       {
         "name": "dtw_cuda",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 147,
+        "line": 134,
         "col": null
       },
       {
         "name": "dtw_cuda",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 170,
+        "line": 150,
         "col": null
       },
       {
         "name": "dtw_cuda",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 191,
+        "line": 167,
         "col": null
       },
       {
         "name": "median_filter",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 45,
+        "line": 41,
         "col": null
       },
       {
         "name": "median_filter",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 71,
+        "line": 59,
+        "col": null
+      },
+      {
+        "name": "median_filter",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
+        "line": 61,
         "col": null
       },
       {
         "name": "median_filter_cuda",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\triton_ops.py",
-        "line": 148,
+        "line": 115,
         "col": null
       },
       {
         "name": "median_filter",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 53,
-        "col": null
-      },
-      {
-        "name": "median_kernel",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\triton_ops.py",
-        "line": 45,
-        "col": null
-      },
-      {
-        "name": "median_filter_cuda",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\triton_ops.py",
-        "line": 138,
-        "col": null
-      },
-      {
-        "name": "median_filter",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 64,
+        "line": 49,
         "col": null
       },
       {
         "name": "get_encoding",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 336,
+        "line": 342,
         "col": null
       },
       {
         "name": "get_tokenizer",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 429,
+        "line": 409,
+        "col": null
+      },
+      {
+        "name": "get_encoding",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
+        "line": 341,
+        "col": null
+      },
+      {
+        "name": "get_encoding",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
+        "line": 369,
         "col": null
       },
       {
@@ -1428,45 +1646,9 @@
         "col": null
       },
       {
-        "name": "get_encoding",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 347,
-        "col": null
-      },
-      {
-        "name": "get_encoding",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 346,
-        "col": null
-      },
-      {
-        "name": "get_encoding",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 351,
-        "col": null
-      },
-      {
-        "name": "get_encoding",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 389,
-        "col": null
-      },
-      {
         "name": "encode",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 162,
-        "col": null
-      },
-      {
-        "name": "_download",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
-        "line": 71,
-        "col": null
-      },
-      {
-        "name": "load_model",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
-        "line": 189,
+        "line": 164,
         "col": null
       },
       {
@@ -1478,7 +1660,25 @@
       {
         "name": "load_model",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
-        "line": 208,
+        "line": 176,
+        "col": null
+      },
+      {
+        "name": "<lambda>",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
+        "line": 69,
+        "col": null
+      },
+      {
+        "name": "_download",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
+        "line": 69,
+        "col": null
+      },
+      {
+        "name": "load_model",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
+        "line": 198,
         "col": null
       },
       {
@@ -1496,13 +1696,25 @@
       {
         "name": "__init__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 268,
+        "line": 267,
         "col": null
       },
       {
         "name": "load_model",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
-        "line": 218,
+        "line": 206,
+        "col": null
+      },
+      {
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
+        "line": 213,
+        "col": null
+      },
+      {
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
+        "line": 275,
         "col": null
       },
       {
@@ -1520,19 +1732,13 @@
       {
         "name": "__init__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
+        "line": 218,
+        "col": null
+      },
+      {
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
         "line": 89,
-        "col": null
-      },
-      {
-        "name": "__init__",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 213,
-        "col": null
-      },
-      {
-        "name": "__init__",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 276,
         "col": null
       },
       {
@@ -1542,27 +1748,21 @@
         "col": null
       },
       {
-        "name": "__init__",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 218,
-        "col": null
-      },
-      {
-        "name": "__init__",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 88,
+        "name": "load_model",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
+        "line": 207,
         "col": null
       },
       {
         "name": "load_model",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
-        "line": 221,
+        "line": 214,
         "col": null
       },
       {
-        "name": "load_model",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
-        "line": 231,
+        "name": "load_audio",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\audio.py",
+        "line": 58,
         "col": null
       },
       {

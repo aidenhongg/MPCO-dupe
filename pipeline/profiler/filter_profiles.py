@@ -8,43 +8,29 @@ import json
 PROFILER_DIR = Path(__file__).parent
 VENV_PYTHON = PROFILER_DIR / "venv" / "Scripts" / "python.exe"
 
-def is_import_line(file_path: str, line_number: int) -> bool:
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-                        
-        line = lines[line_number - 1].strip()
-        
-        if line.startswith('import ') or line.startswith('from '):
-            return True
-            
-        return False
-    except Exception:
-        return False
-
 def fix_venv(proj_name : str):
     if not VENV_PYTHON.exists():
         print(f"Error: Virtual environment not found at {VENV_PYTHON}")
         sys.exit(1)
 
-    print("Reinitializing whisper at correct path...")
-    whisper_path = PROFILER_DIR / "projects" / "whisper"
+    print(f"Reinitializing {proj_name} at correct path...")
+    proj_path = PROFILER_DIR / "projects" / proj_name
 
     install_result = subprocess.run(
-        [str(VENV_PYTHON), "-m", "pip", "install", "-e", str(whisper_path)],
+        [str(VENV_PYTHON), "-m", "pip", "install", "-e", str(proj_path)],
         cwd=PROFILER_DIR,
         capture_output=True)
     
     if install_result.returncode != 0:
-        print("Failed to install whisper")
+        print(f"Failed to install {proj_name}")
         sys.exit(1)
 
 
 # fixing venv should be refactored into different func
 def get_pyprofile(proj_name : str, revision_no = 0, testing_patch = False) -> float:
-    output_file = PROFILER_DIR / "profiles" / f"whisper_profile{revision_no}.speedscope"
+    output_file = PROFILER_DIR / "profiles" / f"{proj_name}_profile{revision_no}.speedscope"
 
-    test_path = PROFILER_DIR / "projects" / "whisper" / "tests"
+    test_path = PROFILER_DIR / "projects" / proj_name / "tests"
     report_file = PROFILER_DIR / "temp" / "report.xml"
     
     # run py-spy with pytest
@@ -71,7 +57,7 @@ def get_pyprofile(proj_name : str, revision_no = 0, testing_patch = False) -> fl
     errors = int(report.get('errors', 0))
     if errors > 0:
         print(f"Error: Test suite encountered {errors} errors")
-        return None, None
+        return None, None, None
     
     failure_count = int(report.get('failures', 0))
     duration = float(report.get('time', 0.0))
@@ -125,7 +111,7 @@ def _filter_speedscope(proj_name : str, revision_no = 0):
             continue
         
         # Skip <module> frames that are on import lines
-        if frame_name == '<module>' and frame_file and is_import_line(frame_file, frame.get('line', 0)):
+        if frame_name == '<module>' and frame_file and _is_import_line(frame_file, frame.get('line', 0)):
             continue
         
         # Skip test files
@@ -179,3 +165,18 @@ def _filter_speedscope(proj_name : str, revision_no = 0):
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
     
+
+def _is_import_line(file_path: str, line_number: int) -> bool:
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+                        
+        line = lines[line_number - 1].strip()
+        
+        if line.startswith('import ') or line.startswith('from '):
+            return True
+            
+        return False
+    except Exception:
+        return False
+

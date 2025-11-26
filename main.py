@@ -1,8 +1,43 @@
 from pipeline.pipeline import optimize_projects
+import pandas as pd
+import sys
+
+class Teer:
+    def __init__(self, file_path):
+        self.terminal = sys.stdout
+        self.log = open(file_path, 'a', encoding='utf-8')
+    
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+    
+    def flush(self):
+        self.terminal.flush()
+        self.log.flush()
+    
+    def close(self):
+        self.log.close()
 
 def main():
-    table = optimize_projects("Optimize the specific code object provided. Return ONLY the optimized version of that object, preserving its exact signature and interface. Do not recreate parent classes or surrounding code.")
-    table.to_csv("test_results3.csv", index=False)
-    
+    teer, old_stdout  = Teer("test_logs.txt"), sys.stdout
+    sys.stdout = teer
+
+    try:
+        tester = optimize_projects()
+
+        while True:
+            try:
+                test_results = next(tester)
+                pd.DataFrame(test_results).to_csv("test_results.csv", mode='a', header=not pd.io.common.file_exists("test_results.csv"), index=False)
+
+            except StopIteration:
+                break
+            except Exception:
+                continue
+
+    finally:
+        sys.stdout = old_stdout
+        teer.close()
+            
 if __name__ == "__main__":
     main()

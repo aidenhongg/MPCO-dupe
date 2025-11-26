@@ -4,4 +4,6 @@ API_KEYS.json
 __pycache__/
 *.py[cod]
 **/venv/
+**/.pytest_cache/
+
 pipeline/profiler/projects/
