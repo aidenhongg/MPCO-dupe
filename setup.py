@@ -2,6 +2,8 @@ import requests
 from typing import Dict
 import json
 import subprocess
+import os
+import shutil
 
 def regenerate_contexts(links : dict) -> None:
     def get_repo_info(owner, repo_name) -> Dict[str, list]:
@@ -48,9 +50,14 @@ def regenerate_repos(links : dict) -> None:
     for repo in links.values():
         owner = repo['owner']
         name = repo['name']
+        
+        base_dir = './pipeline/profiler/projects'
+        repo_path = os.path.join(base_dir, name)
+        if os.path.isdir(repo_path):
+            shutil.rmtree(repo_path)
 
         subprocess.run(['git', 'clone', f"https://github.com/{owner}/{name}.git"],
-                       cwd='./profiler/projects',
+                       cwd=base_dir,
                        check=True,
                        capture_output=False)
 

@@ -19,8 +19,8 @@ echo "Active Python: $(which python)"
 pip install pytest uv
 
 # install local projects to be profiled and edited
-uv pip install -e ./projects/langflow
-uv pip install -e ./projects/whisper
+uv pip install -e ./pipeline/profiler/projects/langflow
+uv pip install -e ./pipeline/profiler/projects/whisper
 
 # deactivate
 deactivate
