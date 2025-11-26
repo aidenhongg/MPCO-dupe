@@ -21,7 +21,6 @@ class Teer:
         self.log.close()
 
 def main():
-    """
     teer, old_stdout  = Teer("./results/test_logs.txt"), sys.stdout
     sys.stdout = teer
 
@@ -45,10 +44,7 @@ def main():
     finally:
         sys.stdout = old_stdout
         teer.close()
-    
-    """
-    graph_main("./results/test_results.csv")
-
+        graph_main(dataset_file)
             
 if __name__ == "__main__":
     main()
