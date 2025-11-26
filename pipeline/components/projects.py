@@ -1,8 +1,10 @@
-from constants import PROJECTS
-from pathlib import Path
-import ast
 from ast import FunctionDef, AsyncFunctionDef, ClassDef
+import ast
+
+from pathlib import Path
 import json
+
+from constants import PROJECTS
  
 class InvalidTask(Exception):
     pass
@@ -11,7 +13,7 @@ class Project:
     def __init__(self, name: str):
         self.name = name
         self.optimized = []
-        self.root_dir = Path(__file__).parent / "projects" / name
+        self.root_dir = Path(__file__).parent.parent / "profiler" / "projects" / name
         self.revisions = 0
 
         if name not in PROJECTS:
@@ -23,19 +25,18 @@ class Project:
 class PyProj(Project):
     def __init__(self, name: str):
         super().__init__(name)
-        self.top_bottlenecks = _speedscope_bottlenecks(self.name, self.root_dir) # should return list of nodes
+        self.top_bottlenecks = _speedscope_bottlenecks(self.name) # should return list of nodes
 
     def load_function(self): # rename to load bottleneck
         current_node = self.top_bottlenecks[self.revisions]
         return _node_to_obj(current_node, self.root_dir)
         
-def _speedscope_bottlenecks(name : str, root_dir : str):
+def _speedscope_bottlenecks(name : str):
     # Define paths
-    profiler_dir = Path(__file__).parent
+    profiler_dir = Path(__file__).parent.parent / "profiler"
     filtered_file = profiler_dir / "profiles" / f"{name}_filtered{0}.speedscope"
     if not filtered_file.exists():
         raise FileNotFoundError(f"Filtered profile not found: {filtered_file}")
-    print(f"Loading filtered profile from: {filtered_file}")
     
     # Load the filtered speedscope file
     with open(filtered_file, 'r', encoding='utf-8') as f:

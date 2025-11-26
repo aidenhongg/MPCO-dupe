@@ -50,22 +50,21 @@ def get_pyprofile(proj_name : str, revision_no = 0, testing_patch = False) -> fl
     # run py-spy with pytest
     print("Running py-spy profiler...")
     try:
-        subprocess.run(["py-spy", "record",
-                        "-f", "speedscope",
-                        "--full-filenames",
-                        "-o", str(output_file),
-                        "--subprocesses",
-                        "--",
-                        str(VENV_PYTHON), "-m", "pytest", 
-                        str(test_path), "--tb=no", 
-                        f"--junit-xml={report_file}"],
-                        capture_output=testing_patch,
-                        cwd=PROFILER_DIR)
+        profile_results = subprocess.run(["py-spy", "record",
+                                            "-f", "speedscope",
+                                            "--full-filenames",
+                                            "-o", str(output_file),
+                                            "--subprocesses",
+                                            "--",
+                                            str(VENV_PYTHON), "-m", "pytest", 
+                                            str(test_path), f"--tb={"short" if testing_patch else "no"}", 
+                                            f"--junit-xml={report_file}"],
+                                            capture_output=testing_patch,
+                                            cwd=PROFILER_DIR)
 
     except KeyboardInterrupt:
         print("Tests halted - speedscope saved")
     
-    print(f"Profiling complete. Output saved to {output_file}")
     root = ET.parse(report_file).getroot()
     report = root if root.tag == 'testsuite' else root.find('testsuite')
 
@@ -80,7 +79,7 @@ def get_pyprofile(proj_name : str, revision_no = 0, testing_patch = False) -> fl
     # finally generate filtered speedscope
     _filter_speedscope(proj_name, revision_no)
 
-    return failure_count, duration
+    return failure_count, duration, profile_results
 
 # probably merge into get_pyprofile
 def _filter_speedscope(proj_name : str, revision_no = 0):

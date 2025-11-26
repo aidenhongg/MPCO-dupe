@@ -6,7 +6,7 @@ import sys
 
 # Add parent directory to path to import the module
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from pipeline.profiler.projects import _get_snippet
+from pipeline.components.projects import _get_snippet
 
 
 class TestEnclosingScope:

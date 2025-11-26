@@ -4,7 +4,7 @@ from pathlib import Path
 # Add parent directory to path to import projects module
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from pipeline.profiler.projects import _get_snippet
+from pipeline.components.projects import _get_snippet
 
 def test_find_tokenizer_snippet():
     """

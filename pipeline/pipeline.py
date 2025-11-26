@@ -1,17 +1,18 @@
-from constants import *
-import pandas as pd
-
 from pipeline.metaprompters import OpenMP, MetaPrompter
 from pipeline.optimizers import *
-
+from pipeline.components import *
 from pipeline.profiler import *
 
-import difflib
+from constants import *
+
 from pathlib import Path
+import pandas as pd
 import subprocess
-import tempfile
-import os
 import traceback
+import tempfile
+import difflib
+import os
+
 
 #testing
 PROJECTS = {'whisper'}
@@ -56,16 +57,6 @@ class MyPatch:
         optimized_module = (old_module[:start_line] + 
                             self.optimized_code + 
                             old_module[end_line + 1:])
-
-        old_code = old_module[start_line:end_line + 1]
-
-        # testing
-        with open('./temp2.txt', 'w', encoding='utf-8') as f:
-            f.writelines(old_module)
-        with open('./temp.txt', 'w', encoding='utf-8') as f:
-            f.writelines(optimized_module)
-        with open('./oldobj.txt', 'w', encoding='utf-8') as f:
-            f.writelines(old_code)
 
         diff_lines = list(difflib.unified_diff(old_module,
                                                optimized_module,
@@ -112,19 +103,18 @@ def optimize_projects(objective : str):
                                          'project', 'optimizer', 'prompt', 'prompt_type', 
                                          'failed_attempts', 'avg_runtime'])
     mpo4 = OpenMP()
-    optims = (GeminiOptimizer(),)
-    # add back AnthroOptimizer(), to optims
+    optims = (AnthroOptimizer(), OpenOptimizer(), GeminiOptimizer(),)
+
     for proj_name in list(PROJECTS):
         # split this for python / cpp
         # pick out bottlenecks
         fix_venv(proj_name) # possible refactor into main in root
         
-        og_failure_count, duration = get_pyprofile(proj_name, 0)
+        og_failure_count, duration, _ = get_pyprofile(proj_name, 0)
         if og_failure_count is None:
             print(f"Test suite on {proj_name} errors - skipping")
             continue
 
-        # print(f"Project: {proj_name}, Failure Count: {og_failure_count}, Duration: {duration}")
         project = PyProj(proj_name)
 
         # generate snippets for each revision model
@@ -133,6 +123,7 @@ def optimize_projects(objective : str):
         for optim in optims:
             # generate necessary prompts
             meta_prompt = mpo4.get_prompt(objective, proj_name, task, optim.name)
+            print("GENERATED META PROMPT: \n" + meta_prompt)
             base_contextual_prompt = _base_template(objective, proj_name, task, optim.name)
             for prompt, metaprompter, prompt_type in ((meta_prompt, mpo4, 'MP'),
                                                     (FEW_SHOT, None, 'FS'),
@@ -166,25 +157,32 @@ def optimize_projects(objective : str):
                         print("Optimizations generated - benchmarking...")
 
                         # now we have ~10 patches - run tests on current revision (10th)
-                        new_failure_count, duration = get_pyprofile(proj_name, 'bench')
+                        new_failure_count, duration, profile = get_pyprofile(proj_name, 'bench', testing_patch=True)
 
                         # if the last revision is worse, revert all patches and try again
                         if new_failure_count > og_failure_count:
+                            print("Critical optimization failure - reverting patches and trying again ")
+                            
+                            # display 
+                            print(profile.stderr.decode('utf-8'))
+                            
                             [patch._revert_patch() for patch in patches]
                             continue
                         
                         # if the last revision is successful, keep testing and then breka
                         else:
+                            print(f"Benchmark {1} complete with duration {duration}")
                             runtimes.append(duration)
-                            for _ in range(9):
-                                _, duration = get_pyprofile(proj_name, 'bench')
+                            for bench in range(9):
+                                _, duration, _ = get_pyprofile(proj_name, 'bench', testing_patch=True)
+                                print(f"Benchmark {bench + 2} complete with duration {duration}")
                                 runtimes.append(duration)
                             break
                 except BaseException as e:
                     print(f"Error during optimization loop: {e}")
                     traceback.print_exc()
                 finally:
-                    print(f"Done with {prompt_type} - moving to next prompt type...")
+                    print(f"\nDone with {prompt_type} prompting - moving to next prompt type for project {proj_name} with optimizer {optim.name}\n")
                     _assemble_results(master_table, all_snippets, 
                                       proj_name, optim.name, 
                                       prompt, prompt_type, 
@@ -196,9 +194,6 @@ def optimize_projects(objective : str):
             print(f"Done with {optim.name} - moving to next optimizer...")
 
     return master_table
-
-                    
-                    
 
 def _optimize_snippet(objective : str, task : str, 
                       project : PyProj, optim : AnthroOptimizer | OpenOptimizer | GeminiOptimizer, 
@@ -213,6 +208,7 @@ def _optimize_snippet(objective : str, task : str,
 
     for failed_optims in range(10):
         try: 
+            print("Optimizing...")
             new_snippet = optim.generate(prompt, old_snippet, scope)
         except (ValueError, KeyError) as e:
             print(f"Error generating code: {e}")
@@ -222,26 +218,34 @@ def _optimize_snippet(objective : str, task : str,
         patch = MyPatch(code_object, new_snippet, project.root_dir)
         if patch._apply_patch():
             # run tests to get runtimes in this scope
-            new_failure_count, _ = get_pyprofile(proj_name, project.revisions + 1, testing_patch = True)
+            new_failure_count, _, profile = get_pyprofile(proj_name, project.revisions + 1, testing_patch = True)
+            
             if not new_failure_count or new_failure_count > og_failure_count:
+                print("============FAULTY CODE============")
                 print(code_object['rel_path'], code_object['start_line'], code_object['end_line'])
                 print(code_object['code']) # testing - may have to remove later
-                
+                print("===================================")
+
+                print(profile.stdout.decode('utf-8'))
+
                 patch._revert_patch()
                 print(f"{failed_optims + 1} failed optimizations : regenerating attempt...")
                 
                 if failed_optims == 9:
                     raise OptimizationError(code_object, optim.name)
-                if project.revisions == 0 and metaprompter:
+                if project.revisions == 0 and metaprompter: # only regenerate prompt if the very first revision fails
                     print("Regenerating prompt...")
                     prompt = metaprompter.get_prompt(objective, proj_name, task, optim.name) 
-            
+                    print("GENERATED META PROMPT: \n" + prompt)
+
             else:
                 patches.insert(0, patch)
                 project.revisions += 1
                 return {old_snippet : new_snippet}, failed_optims, prompt
         else:
             patch._revert_patch()
+
+    raise OptimizationError(code_object, optim.name)
 
 def _base_template(objective, proj_name, task, optim_name):
     p_name, p_desc, p_lang = (PROJECT_CONTEXTS[proj_name]['name'], 

@@ -9,7 +9,7 @@ sys.path.insert(0, str(project_root))
 # Change working directory to project root (needed for constants.py relative paths)
 os.chdir(project_root)
 
-from pipeline.profiler.projects import PyProj
+from pipeline.components.projects import PyProj
 
 
 def test_pyproj_init():
