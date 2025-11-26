@@ -50,20 +50,20 @@ TurinTech's ARTEMIS was substituted for model calls to public APIs. Claude Sonne
 #
 The paper didn't specify most contextual details, so I put my best approximations. As follows:
 
-{task_considerations} : `Algorithmic complexity and big O notation; data structures and their efficiency; loop optimizations and redundant iterations; memory access patterns and cache utilization; I/O operations and system calls; parallel processing and multi-threading; redundant computations.`
+`{task_considerations}` : Algorithmic complexity and big O notation; data structures and their efficiency; loop optimizations and redundant iterations; memory access patterns and cache utilization; I/O operations and system calls; parallel processing and multi-threading; redundant computations.
 
-{4o_considerations} : `Focus on complex interdependencies and comprehensive optimization across the codebase, internally verify assumptions and performance metrics from the task description before proposing changes, consider memory and cache behavior vectorization and system level factors with thorough reasoning.`
+`{4o_considerations}` : Focus on complex interdependencies and comprehensive optimization across the codebase, internally verify assumptions and performance metrics from the task description before proposing changes, consider memory and cache behavior vectorization and system level factors with thorough reasoning.
 
-{25_considerations} : `Apply complex reasoning to verify assumptions about performance metrics and project goals, think step by step to analyze bottlenecks evaluate trade offs and select the best strategy, provide only the final optimized code after internal reasoning.`
+`{25_considerations}` : Apply complex reasoning to verify assumptions about performance metrics and project goals, think step by step to analyze bottlenecks evaluate trade offs and select the best strategy, provide only the final optimized code after internal reasoning.
 
-{40_considerations} : `Approach optimization with systematic architectural thinking, balance micro optimizations and broader structural improvements, provide clear rationale for each decision and prioritize maintainability.`
+`{40_considerations}` : Approach optimization with systematic architectural thinking, balance micro optimizations and broader structural improvements, provide clear rationale for each decision and prioritize maintainability.
 
 #
 The following were heavily influenced by the lack of guidance from ARTEMIS (models kept giving faulty outputs, such as incorrect signatures, object types, etc.):
 
-{task_description} : `Synthesize a single, best-runtime optimized version of the given object, preserving its signature.`
+`{task_description}` : Synthesize a single, best-runtime optimized version of the given object, preserving its signature.
 
-{Objective} : `Optimize the specific code object provided. Return ONLY the optimized version of that object, preserving its exact signature and interface.`
+`{Objective}` : Optimize the specific code object provided. Return ONLY the optimized version of that object, preserving its exact signature and interface.
 
 #
 
