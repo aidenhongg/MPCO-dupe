@@ -8,8 +8,6 @@ from constants import *
 import pandas as pd
 import traceback
 
-#testing
-PROJECTS = {'langflow', 'whisper'}
 
 class OptimizationError(Exception):
     def __init__(self, code_object, optimizer_name, attempts=10):
@@ -32,10 +30,18 @@ def optimize_projects():
         # pick out bottlenecks
         fix_venv(proj_name) # possible refactor into main in root
         
-        og_failure_count, duration, _ = get_pyprofile(proj_name, 0)
+        og_failure_count, _, _ = get_pyprofile(proj_name, 0)
         if og_failure_count is None:
             print(f"Test suite on {proj_name} errors - skipping")
             continue
+
+        # get 10 trial average for the original runtime - before optimizations
+        original_runtimes = []
+        for _ in range(10):
+            _, original_runtime, _ = get_pyprofile(proj_name, 0)
+            original_runtimes.append(original_runtime)
+        og_runtime = sum(original_runtimes) / len(original_runtimes)
+        print(f"Benchmark completed for {proj_name} : avg runtime {og_runtime}")
 
         project = PyProj(proj_name)
 
@@ -79,7 +85,7 @@ def optimize_projects():
                         print("Optimizations generated - benchmarking...")
 
                         # now we have ~10 patches - run tests on current revision (10th)
-                        new_failure_count, duration, profile = get_pyprofile(proj_name, 'bench', testing_patch=True)
+                        new_failure_count, new_runtime, profile = get_pyprofile(proj_name, 'bench', testing_patch=True)
 
                         # if the last revision is worse, revert all patches and try again
                         if new_failure_count > og_failure_count:
@@ -93,12 +99,12 @@ def optimize_projects():
                         
                         # if the last revision is successful, keep testing and then breka
                         else:
-                            print(f"Benchmark {1} complete with duration {duration}")
-                            runtimes.append(duration)
+                            print(f"Benchmark {1} complete with runtime {new_runtime}")
+                            runtimes.append(new_runtime)
                             for bench in range(9):
-                                _, duration, _ = get_pyprofile(proj_name, 'bench', testing_patch=True)
-                                print(f"Benchmark {bench + 2} complete with duration {duration}")
-                                runtimes.append(duration)
+                                _, new_runtime, _ = get_pyprofile(proj_name, 'bench', testing_patch=True)
+                                print(f"Benchmark {bench + 2} complete with runtime {new_runtime}")
+                                runtimes.append(new_runtime)
                             break
                 except BaseException as e:
                     print(f"Error during optimization loop: {e}")
@@ -108,12 +114,14 @@ def optimize_projects():
                     yield _assemble_results(all_snippets, 
                                            proj_name, optim.name, 
                                            prompt, prompt_type, 
-                                           all_attempts, runtimes) # record results
+                                           all_attempts, runtimes,
+                                           og_runtime) # record results
 
                     [patch.revert_patch() for patch in patches] # always revert all patches at the end
                     project.revisions = 0 # reset revisions for next set of revisions
                     
             print(f"Done with {optim.name} - moving to next optimizer...")
+        print(f"Optimization complete for project {proj_name}")
     return
 def _optimize_snippet(objective : str, task : str, 
                       project : PyProj, optim : AnthroOptimizer | OpenOptimizer | GeminiOptimizer, 
@@ -185,7 +193,8 @@ def _base_template(objective, proj_name, task, optim_name):
 def _assemble_results(all_snippets : list, 
                       proj_name : str, optim_name : str, 
                       prompt : str, prompt_type : str, 
-                      all_attempts : list, runtimes : list) -> list:
+                      all_attempts : list, runtimes : list,
+                      original_runtime : float) -> list:
 
     rows = []
     avg_runtime = sum(runtimes) / len(runtimes) if runtimes else 0
@@ -199,7 +208,8 @@ def _assemble_results(all_snippets : list,
                          'prompt': prompt,
                          'prompt_type': prompt_type,
                          'failed_attempts': attempts,
-                         'avg_runtime': avg_runtime})            
+                         'avg_runtime': avg_runtime,
+                         'original_runtime' : original_runtime})            
 
     return pd.DataFrame(rows)
 

@@ -1,28 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="26" time="15.538" timestamp="2025-11-26T02:55:11.448108-08:00" hostname="aiden"><testcase classname="tests.test_audio" name="test_audio" time="0.001"><failure message="RuntimeError: Failed to load audio: name 'Popen' is not defined">projects\whisper\whisper\audio.py:59: in load_audio
-    process = Popen(cmd, stdout=PIPE, stderr=PIPE)
-              ^^^^^
-E   NameError: name 'Popen' is not defined
-
-The above exception was the direct cause of the following exception:
-projects\whisper\tests\test_audio.py:10: in test_audio
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="26" time="14.085" timestamp="2025-11-26T12:25:49.481669-08:00" hostname="aiden"><testcase classname="tests.test_audio" name="test_audio" time="0.006"><failure message="FileNotFoundError: [WinError 2] The system cannot find the file specified">projects\whisper\tests\test_audio.py:10: in test_audio
     audio = load_audio(audio_path)
             ^^^^^^^^^^^^^^^^^^^^^^
-projects\whisper\whisper\audio.py:66: in load_audio
-    raise RuntimeError(f"Failed to load audio: {str(e)}") from e
-E   RuntimeError: Failed to load audio: name 'Popen' is not defined</failure></testcase><testcase classname="tests.test_normalizer" name="test_number_normalizer[std0]" time="0.004" /><testcase classname="tests.test_normalizer" name="test_number_normalizer[std1]" time="0.008" /><testcase classname="tests.test_normalizer" name="test_spelling_normalizer" time="0.001" /><testcase classname="tests.test_normalizer" name="test_text_normalizer" time="0.002" /><testcase classname="tests.test_timing" name="test_dtw[10-20]" time="1.873" /><testcase classname="tests.test_timing" name="test_dtw[32-16]" time="0.002" /><testcase classname="tests.test_timing" name="test_dtw[123-1500]" time="0.010" /><testcase classname="tests.test_timing" name="test_dtw[234-189]" time="0.003" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[10-20]" time="0.795" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[32-16]" time="0.009" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[123-1500]" time="0.014" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[234-189]" time="0.004" /><testcase classname="tests.test_timing" name="test_median_filter[shape0]" time="0.002" /><testcase classname="tests.test_timing" name="test_median_filter[shape1]" time="0.002" /><testcase classname="tests.test_timing" name="test_median_filter[shape2]" time="0.012" /><testcase classname="tests.test_timing" name="test_median_filter[shape3]" time="5.392" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape0]" time="0.149" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape1]" time="0.004" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape2]" time="0.022" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape3]" time="3.003" /><testcase classname="tests.test_tokenizer" name="test_tokenizer[True]" time="0.099" /><testcase classname="tests.test_tokenizer" name="test_tokenizer[False]" time="0.001" /><testcase classname="tests.test_tokenizer" name="test_multilingual_tokenizer" time="0.210" /><testcase classname="tests.test_tokenizer" name="test_split_on_unicode" time="0.001" /><testcase classname="tests.test_transcribe" name="test_transcribe[tiny.en]" time="0.542"><failure message="RuntimeError: Failed to load audio: name 'Popen' is not defined">projects\whisper\whisper\audio.py:59: in load_audio
-    process = Popen(cmd, stdout=PIPE, stderr=PIPE)
-              ^^^^^
-E   NameError: name 'Popen' is not defined
-
-The above exception was the direct cause of the following exception:
-projects\whisper\tests\test_transcribe.py:17: in test_transcribe
+projects\whisper\whisper\audio.py:58: in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+E   FileNotFoundError: [WinError 2] The system cannot find the file specified</failure></testcase><testcase classname="tests.test_normalizer" name="test_number_normalizer[std0]" time="0.003" /><testcase classname="tests.test_normalizer" name="test_number_normalizer[std1]" time="0.008" /><testcase classname="tests.test_normalizer" name="test_spelling_normalizer" time="0.001" /><testcase classname="tests.test_normalizer" name="test_text_normalizer" time="0.002" /><testcase classname="tests.test_timing" name="test_dtw[10-20]" time="1.762" /><testcase classname="tests.test_timing" name="test_dtw[32-16]" time="0.001" /><testcase classname="tests.test_timing" name="test_dtw[123-1500]" time="0.010" /><testcase classname="tests.test_timing" name="test_dtw[234-189]" time="0.002" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[10-20]" time="0.843" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[32-16]" time="0.007" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[123-1500]" time="0.016" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[234-189]" time="0.004" /><testcase classname="tests.test_timing" name="test_median_filter[shape0]" time="0.003" /><testcase classname="tests.test_timing" name="test_median_filter[shape1]" time="0.003" /><testcase classname="tests.test_timing" name="test_median_filter[shape2]" time="0.009" /><testcase classname="tests.test_timing" name="test_median_filter[shape3]" time="5.172" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape0]" time="0.038" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape1]" time="0.013" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape2]" time="0.023" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape3]" time="1.989" /><testcase classname="tests.test_tokenizer" name="test_tokenizer[True]" time="0.111" /><testcase classname="tests.test_tokenizer" name="test_tokenizer[False]" time="0.001" /><testcase classname="tests.test_tokenizer" name="test_multilingual_tokenizer" time="0.218" /><testcase classname="tests.test_tokenizer" name="test_split_on_unicode" time="0.001" /><testcase classname="tests.test_transcribe" name="test_transcribe[tiny.en]" time="0.705"><failure message="FileNotFoundError: [WinError 2] The system cannot find the file specified">projects\whisper\tests\test_transcribe.py:17: in test_transcribe
     result = model.transcribe(
 projects\whisper\whisper\transcribe.py:139: in transcribe
     mel = log_mel_spectrogram(audio, model.dims.n_mels, padding=N_SAMPLES)
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-projects\whisper\whisper\audio.py:152: in log_mel_spectrogram
+projects\whisper\whisper\audio.py:140: in log_mel_spectrogram
     audio = load_audio(audio)
             ^^^^^^^^^^^^^^^^^
-projects\whisper\whisper\audio.py:66: in load_audio
-    raise RuntimeError(f"Failed to load audio: {str(e)}") from e
-E   RuntimeError: Failed to load audio: name 'Popen' is not defined</failure></testcase></testsuite></testsuites>
+projects\whisper\whisper\audio.py:58: in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+E   FileNotFoundError: [WinError 2] The system cannot find the file specified</failure></testcase></testsuite></testsuites>

@@ -48,7 +48,7 @@ class MyPatch:
             patch_file.write(self.patch)
             patch_path = patch_file.name
 
-        result = subprocess.run(['git', 'apply', '--allow-empty', patch_path], 
+        result = subprocess.run(['git', 'apply', '--whitespace=nowarn', patch_path], 
                               capture_output=True, 
                               text=True,
                               cwd=self.root)
@@ -61,7 +61,7 @@ class MyPatch:
         return True
     
     def revert_patch(self):
-        reversion = subprocess.run(['git', 'apply', '--allow-empty', '--reverse', self.patch_path],
+        reversion = subprocess.run(['git', 'apply', '--whitespace=nowarn', '--reverse', self.patch_path],
                                     capture_output=True,
                                     cwd=self.root)
         if reversion.returncode != 0:

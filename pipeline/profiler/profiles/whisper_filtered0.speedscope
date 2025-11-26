@@ -3,98 +3,21 @@
   "profiles": [
     {
       "type": "sampled",
-      "name": "Process 11292 Thread 11648 \"MainThread\"",
+      "name": "Process 13520 Thread 15628 \"MainThread\"",
       "unit": "seconds",
       "startValue": 0.0,
-      "endValue": 15.4,
+      "endValue": 15.14,
       "samples": [
         [
+          1,
           0
         ],
         [
-          1
-        ],
-        [
+          4,
+          3,
           2
         ],
         [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3
-        ],
-        [
-          3,
-          4
-        ],
-        [
-          3,
-          4
-        ],
-        [
-          5
-        ],
-        [
-          5
-        ],
-        [
-          5
-        ],
-        [
           5
         ],
         [
@@ -131,33 +54,6 @@
           6
         ],
         [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
-          6
-        ],
-        [
           7
         ],
         [
@@ -170,85 +66,34 @@
           7
         ],
         [
-          7
+          8
         ],
         [
-          7
+          8
         ],
         [
-          7
+          8
         ],
         [
-          7
+          8
         ],
         [
-          7
+          8
         ],
         [
-          7
+          8
         ],
         [
-          7
+          8
         ],
         [
-          7
+          8
         ],
         [
-          7
+          8
         ],
         [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          7
-        ],
-        [
-          6
+          8
         ],
         [
           8
@@ -257,124 +102,97 @@
           9
         ],
         [
-          7
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          11
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
+          9
         ],
         [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
+          9
         ],
         [
           10
@@ -383,370 +201,424 @@
           11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
         ],
         [
           13,
@@ -757,94 +629,215 @@
           12
         ],
         [
-          10
+          13,
+          12
         ],
         [
-          10
+          11
         ],
         [
-          10
+          13,
+          12
         ],
         [
-          10
+          13,
+          14
         ],
         [
-          10
+          13,
+          12
         ],
         [
-          10
+          15
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
+        ],
+        [
+          11
         ],
         [
           13,
@@ -854,681 +847,577 @@
           11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
+          11
         ],
         [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          10
-        ],
-        [
-          15,
-          14
-        ],
-        [
-          15,
-          14
-        ],
-        [
-          15,
-          14
-        ],
-        [
-          15,
-          16
-        ],
-        [
-          15,
-          16
-        ],
-        [
-          15,
-          16
-        ],
-        [
-          15,
-          16
-        ],
-        [
-          15,
-          16
-        ],
-        [
-          15,
-          14
-        ],
-        [
-          15,
           18,
-          17
+          17,
+          16
         ],
         [
-          15,
-          14
-        ],
-        [
-          15,
           18,
-          17
+          19
         ],
         [
-          15,
+          18,
+          17,
           16
         ],
         [
-          15,
+          18,
+          19
+        ],
+        [
+          18,
+          17,
           16
         ],
         [
-          15,
+          18,
+          19
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          18,
+          17,
           16
         ],
         [
-          15,
+          18,
+          19
+        ],
+        [
+          18,
+          17,
           16
         ],
         [
+          18,
           19
         ],
         [
+          18,
+          17,
+          16
+        ],
+        [
+          18,
           19
         ],
         [
-          19
-        ],
-        [
-          19
-        ],
-        [
-          19
-        ],
-        [
-          19
-        ],
-        [
-          19
-        ],
-        [
-          19
-        ],
-        [
-          21,
+          18,
           20
         ],
         [
-          21,
+          18,
           20
         ],
         [
-          21,
-          20
+          21
         ],
         [
-          21,
-          20
+          21
         ],
         [
-          21,
-          20
+          21
         ],
         [
+          21
+        ],
+        [
+          21
+        ],
+        [
+          21
+        ],
+        [
+          21
+        ],
+        [
+          21
+        ],
+        [
+          21
+        ],
+        [
+          21
+        ],
+        [
+          23,
           22
         ],
         [
+          23,
           22
         ],
         [
+          23,
           22
         ],
         [
-          22
+          23,
+          24
         ],
         [
-          22
+          23,
+          24
         ],
         [
-          22
+          23,
+          24
         ],
         [
-          22
+          25
         ],
         [
-          22
+          25
         ],
         [
-          26,
-          25,
-          24,
-          23
+          25
         ],
         [
-          26,
-          25,
-          24,
-          23
+          25
         ],
         [
-          26,
-          25,
-          24,
-          23
+          25
         ],
         [
-          26,
-          25,
-          24,
-          23
+          25
         ],
         [
-          26,
-          25,
-          24,
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          25
+        ],
+        [
+          29,
           28,
-          27
+          27,
+          26
         ],
         [
-          26,
-          25,
-          24,
+          29,
           28,
-          27
+          32,
+          31,
+          30
         ],
         [
-          26,
-          25,
-          24,
-          23
-        ],
-        [
-          26,
-          25,
-          24,
-          23
-        ],
-        [
-          26,
-          25,
-          24,
+          29,
           28,
-          27
+          32,
+          33
         ],
         [
-          26,
-          25,
-          24,
-          23
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          29
-        ],
-        [
-          26,
-          30,
-          31,
-          23
-        ],
-        [
-          26,
-          30,
-          31,
-          23
-        ],
-        [
-          26,
-          30,
-          31,
-          23
-        ],
-        [
-          26,
-          30,
-          31,
-          23
-        ],
-        [
-          26,
-          30,
-          31,
-          33,
-          32
-        ],
-        [
-          26,
-          30,
-          31,
-          23
-        ],
-        [
+          29,
+          35,
           34
         ],
         [
+          29,
+          35,
           34
         ],
         [
+          29,
+          35,
           34
         ],
         [
+          29,
+          35,
           34
         ],
         [
+          29,
+          35,
           34
         ],
         [
+          29,
+          35,
           34
         ],
         [
-          35
+          29,
+          35,
+          34
         ],
         [
-          35
+          29,
+          35,
+          34
         ],
         [
-          35
+          29,
+          35,
+          34
         ],
         [
-          35
+          29,
+          35,
+          34
         ],
         [
-          35
+          29,
+          35,
+          34
         ],
         [
-          35
+          29,
+          35,
+          34
         ],
         [
-          35
+          29,
+          35,
+          34
         ],
         [
-          37,
+          29,
+          35,
           36,
-          1
+          33
+        ],
+        [
+          29,
+          35,
+          36,
+          38,
+          37
+        ],
+        [
+          29,
+          35,
+          36,
+          38,
+          39
+        ],
+        [
+          29,
+          35,
+          36,
+          38,
+          37
+        ],
+        [
+          29,
+          35,
+          36,
+          38,
+          39
+        ],
+        [
+          29,
+          35,
+          36,
+          33
+        ],
+        [
+          29,
+          35,
+          36,
+          33
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          40
+        ],
+        [
+          41
+        ],
+        [
+          41
+        ],
+        [
+          41
+        ],
+        [
+          41
+        ],
+        [
+          41
+        ],
+        [
+          41
+        ],
+        [
+          41
+        ],
+        [
+          41
         ]
       ],
       "weights": [
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
-        0.01,
         0.01,
         0.01,
         0.01,
@@ -1968,33 +1857,45 @@
   "shared": {
     "frames": [
       {
-        "name": "<module>",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 131,
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
+        "line": 459,
         "col": null
       },
       {
-        "name": "load_audio",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\audio.py",
-        "line": 58,
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
+        "line": 524,
+        "col": null
+      },
+      {
+        "name": "process_words",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
+        "line": 193,
+        "col": null
+      },
+      {
+        "name": "<genexpr>",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
+        "line": 444,
         "col": null
       },
       {
         "name": "__call__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
-        "line": 535,
+        "line": 444,
+        "col": null
+      },
+      {
+        "name": "__call__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\normalizers\\english.py",
+        "line": 541,
         "col": null
       },
       {
         "name": "dtw_cuda",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
         "line": 109,
-        "col": null
-      },
-      {
-        "name": "<module>",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\triton_ops.py",
-        "line": 13,
         "col": null
       },
       {
@@ -2018,25 +1919,13 @@
       {
         "name": "dtw_cuda",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 118,
-        "col": null
-      },
-      {
-        "name": "dtw_cuda",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 120,
+        "line": 135,
         "col": null
       },
       {
         "name": "median_filter",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
         "line": 49,
-        "col": null
-      },
-      {
-        "name": "median_filter",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
-        "line": 35,
         "col": null
       },
       {
@@ -2052,21 +1941,15 @@
         "col": null
       },
       {
-        "name": "get_encoding",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 334,
+        "name": "median_filter_cuda",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\triton_ops.py",
+        "line": 112,
         "col": null
       },
       {
-        "name": "get_tokenizer",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 391,
-        "col": null
-      },
-      {
-        "name": "get_encoding",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
-        "line": 357,
+        "name": "median_filter",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\timing.py",
+        "line": 35,
         "col": null
       },
       {
@@ -2082,9 +1965,39 @@
         "col": null
       },
       {
+        "name": "get_tokenizer",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
+        "line": 391,
+        "col": null
+      },
+      {
+        "name": "get_encoding",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
+        "line": 334,
+        "col": null
+      },
+      {
+        "name": "get_encoding",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
+        "line": 357,
+        "col": null
+      },
+      {
         "name": "encode",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\tokenizer.py",
         "line": 162,
+        "col": null
+      },
+      {
+        "name": "_download",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
+        "line": 65,
+        "col": null
+      },
+      {
+        "name": "load_model",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
+        "line": 137,
         "col": null
       },
       {
@@ -2096,25 +2009,19 @@
       {
         "name": "load_model",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
-        "line": 137,
-        "col": null
-      },
-      {
-        "name": "load_model",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
         "line": 151,
         "col": null
       },
       {
-        "name": "__init__",
+        "name": "sinusoids",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 156,
+        "line": 66,
         "col": null
       },
       {
         "name": "__init__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 184,
+        "line": 181,
         "col": null
       },
       {
@@ -2132,13 +2039,25 @@
       {
         "name": "__init__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 87,
+        "line": 86,
         "col": null
       },
       {
         "name": "__init__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
         "line": 146,
+        "col": null
+      },
+      {
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
+        "line": 184,
+        "col": null
+      },
+      {
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
+        "line": 156,
         "col": null
       },
       {
@@ -2162,13 +2081,19 @@
       {
         "name": "__init__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
-        "line": 88,
+        "line": 87,
         "col": null
       },
       {
         "name": "__init__",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
         "line": 150,
+        "col": null
+      },
+      {
+        "name": "__init__",
+        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\model.py",
+        "line": 88,
         "col": null
       },
       {
@@ -2181,18 +2106,6 @@
         "name": "load_model",
         "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\__init__.py",
         "line": 161,
-        "col": null
-      },
-      {
-        "name": "log_mel_spectrogram",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\audio.py",
-        "line": 140,
-        "col": null
-      },
-      {
-        "name": "transcribe",
-        "file": "C:\\Users\\aiden\\OneDrive\\Desktop\\personalprojects\\ahmedlab\\MPCO-dupe\\pipeline\\profiler\\projects\\whisper\\whisper\\transcribe.py",
-        "line": 139,
         "col": null
       }
     ]

@@ -2,7 +2,7 @@ import json
 from textwrap3 import dedent
 
 # Projects, tasks, and models allowed
-PROJECTS : set = {'langflow', 'whisper'}
+PROJECTS : set = {'whisper'}
 TASKS : set = {'runtime'}
 MODELS : set = {'25', '4o', '40'}
 

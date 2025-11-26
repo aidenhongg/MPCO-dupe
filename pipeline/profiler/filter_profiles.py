@@ -64,7 +64,7 @@ def get_pyprofile(proj_name : str, revision_no = 0, testing_patch = False) -> fl
     errors = int(report.get('errors', 0))
     if errors > 0:
         print(f"Error: Test suite encountered {errors} errors")
-        return None, None, None
+        return None, None, profile_results
     
     failure_count = int(report.get('failures', 0))
     duration = float(report.get('time', 0.0))
