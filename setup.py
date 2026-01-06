@@ -4,8 +4,15 @@ import json
 import subprocess
 import os
 import shutil
+import platform
+from pathlib import Path
+import sys
+import tomllib
+import tomli as tomllib
+import re
 
-def regenerate_contexts(links : dict) -> None:
+
+def regenerate_contexts(repo : str, data : dict) -> None:
     def get_repo_info(owner, repo_name) -> Dict[str, list]:
         try:
             headers = {
@@ -36,37 +43,70 @@ def regenerate_contexts(links : dict) -> None:
                 raise ValueError("Invalid API key!")
         except Exception as e:
             raise Exception(f"Error getting repo: {e}")
-
-    # open and iterate through the links
-    with open('GH_REPOS.json', 'r') as f:
-        links = json.load(f)
     
-    repo_infos = {repo: get_repo_info(data['owner'], data['name']) for repo, data in links.items()}
+    return {repo : get_repo_info(data['owner'], data['name'])}
     
-    with open('./contexts/project_contexts.json', 'w') as f:
-        json.dump(repo_infos, f, indent=4)
+def regenerate_repo(data) -> None:        
+    owner = data['owner']
+    name = data['name']
+    
+    base_dir = './pipeline/profiler/projects'
+    repo_path = os.path.join(base_dir, name)
 
-def regenerate_repos(links : dict) -> None:        
-    for repo in links.values():
-        owner = repo['owner']
-        name = repo['name']
-        
-        base_dir = './pipeline/profiler/projects'
-        repo_path = os.path.join(base_dir, name)
-        if os.path.isdir(repo_path):
-            shutil.rmtree(repo_path)
+    if os.path.isdir(repo_path):
+        shutil.rmtree(repo_path)
+    
+    subprocess.run(['git', 'clone', f"https://github.com/{owner}/{name}.git"],
+                   cwd=base_dir,
+                   check=True,
+                   capture_output=False)
 
-        subprocess.run(['git', 'clone', f"https://github.com/{owner}/{name}.git"],
-                       cwd=base_dir,
-                       check=True,
-                       capture_output=False)
+def regenerate_venv(data):
+    def run_cmd(cmd, cwd = None):
+        str_cmd = [str(arg) for arg in cmd]
+        if cwd is None:
+            return subprocess.run(str_cmd, check=True, capture_output=False)
+        else:
+            return subprocess.run(str_cmd, cwd=cwd, check=True, capture_output=False)
+    
+    name = data['name']
+    
+    repo_path = Path('./pipeline/profiler/projects').resolve() / name
+    venv_path = Path('./pipeline/profiler/venvs').resolve() / f'venv_{name}'
+    cache_path = Path('./pipeline/profiler/venvs').resolve() / 'pip_cache'
+    
+    if platform.system() == "Windows":
+        venvpy_path = venv_path / "Scripts" / "python.exe"
+    else:
+        venvpy_path = venv_path / "bin" / "python"
 
+    # init venv
+    if venv_path.exists():
+        shutil.rmtree(venv_path)
+    run_cmd(['uv', 'venv', venv_path], cwd=repo_path)
+    
+    # ensure pip 
+    run_cmd([venvpy_path, '-m', 'ensurepip', '--upgrade'])
+    run_cmd([venvpy_path, '-m', 'pip', 'install', '--upgrade', 'pip', 'setuptools', 'wheel'])
+
+    # dependencies
+    run_cmd([venvpy_path, "-m", "pip", "install", '--cache-dir', cache_path, '-e', f"{repo_path}[dev]"])
+
+    # install proj 
+    run_cmd([venvpy_path, "-m", "pip", "install", "-e", repo_path])
+    
 def main():
     with open('GH_REPOS.json', 'r') as f:
         links = json.load(f)
+    
+    repo_infos = {}
+    for repo, data in links.items():
+        regenerate_repo(data)
+        repo_infos.update(regenerate_contexts(repo, data))
+        regenerate_venv(data)
 
-    regenerate_repos(links)
-    regenerate_contexts(links)
+    with open('./contexts/project_contexts.json', 'w') as f:
+        json.dump(repo_infos, f, indent=4)
 
 if __name__ == "__main__":
     main()
