@@ -1,7 +1,6 @@
 {
-    "bitmappp" : {"owner" : "paulsbrookes", "name" : "BitmapPlusPlus"},
-    "llama"  : {"owner" : "ggml-org", "name" : "llama.cpp"},    
-    "rpcs3"  : {"owner" : "RPCS3", "name" : "rpcs3"},
-    "whisper"  : {"owner" : "openai", "name" : "whisper"},
-    "langflow"  : {"owner" : "langflow-ai", "name" : "langflow"}
+    "hackingBuddyGPT"  : {"owner" : "ipa-lab", "name" : "hackingBuddyGPT"},
+    "canopen"  : {"owner" : "canopen-python", "name" : "canopen"},
+    "poc-realtime-ai-assistant"  : {"owner" : "disler", "name" : "poc-realtime-ai-assistant"},
+    "python-package-template"  : {"owner" : "microsoft", "name" : "python-package-template"}
 }

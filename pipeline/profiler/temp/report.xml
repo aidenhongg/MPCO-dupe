@@ -1,32 +1,311 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="26" time="14.085" timestamp="2025-11-26T12:25:49.481669-08:00" hostname="aiden"><testcase classname="tests.test_audio" name="test_audio" time="0.006"><failure message="FileNotFoundError: [WinError 2] The system cannot find the file specified">projects\whisper\tests\test_audio.py:10: in test_audio
-    audio = load_audio(audio_path)
-            ^^^^^^^^^^^^^^^^^^^^^^
-projects\whisper\whisper\audio.py:58: in load_audio
-    out = run(cmd, capture_output=True, check=True).stdout
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
-    with Popen(*popenargs, **kwargs) as process:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
-    self._execute_child(args, executable, preexec_fn, close_fds,
-C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: in _execute_child
-    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
-E   FileNotFoundError: [WinError 2] The system cannot find the file specified</failure></testcase><testcase classname="tests.test_normalizer" name="test_number_normalizer[std0]" time="0.003" /><testcase classname="tests.test_normalizer" name="test_number_normalizer[std1]" time="0.008" /><testcase classname="tests.test_normalizer" name="test_spelling_normalizer" time="0.001" /><testcase classname="tests.test_normalizer" name="test_text_normalizer" time="0.002" /><testcase classname="tests.test_timing" name="test_dtw[10-20]" time="1.762" /><testcase classname="tests.test_timing" name="test_dtw[32-16]" time="0.001" /><testcase classname="tests.test_timing" name="test_dtw[123-1500]" time="0.010" /><testcase classname="tests.test_timing" name="test_dtw[234-189]" time="0.002" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[10-20]" time="0.843" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[32-16]" time="0.007" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[123-1500]" time="0.016" /><testcase classname="tests.test_timing" name="test_dtw_cuda_equivalence[234-189]" time="0.004" /><testcase classname="tests.test_timing" name="test_median_filter[shape0]" time="0.003" /><testcase classname="tests.test_timing" name="test_median_filter[shape1]" time="0.003" /><testcase classname="tests.test_timing" name="test_median_filter[shape2]" time="0.009" /><testcase classname="tests.test_timing" name="test_median_filter[shape3]" time="5.172" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape0]" time="0.038" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape1]" time="0.013" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape2]" time="0.023" /><testcase classname="tests.test_timing" name="test_median_filter_equivalence[shape3]" time="1.989" /><testcase classname="tests.test_tokenizer" name="test_tokenizer[True]" time="0.111" /><testcase classname="tests.test_tokenizer" name="test_tokenizer[False]" time="0.001" /><testcase classname="tests.test_tokenizer" name="test_multilingual_tokenizer" time="0.218" /><testcase classname="tests.test_tokenizer" name="test_split_on_unicode" time="0.001" /><testcase classname="tests.test_transcribe" name="test_transcribe[tiny.en]" time="0.705"><failure message="FileNotFoundError: [WinError 2] The system cannot find the file specified">projects\whisper\tests\test_transcribe.py:17: in test_transcribe
-    result = model.transcribe(
-projects\whisper\whisper\transcribe.py:139: in transcribe
-    mel = log_mel_spectrogram(audio, model.dims.n_mels, padding=N_SAMPLES)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-projects\whisper\whisper\audio.py:140: in log_mel_spectrogram
-    audio = load_audio(audio)
-            ^^^^^^^^^^^^^^^^^
-projects\whisper\whisper\audio.py:58: in load_audio
-    out = run(cmd, capture_output=True, check=True).stdout
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
-    with Popen(*popenargs, **kwargs) as process:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
-    self._execute_child(args, executable, preexec_fn, close_fds,
-C:\Users\aiden\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1538: in _execute_child
-    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
-E   FileNotFoundError: [WinError 2] The system cannot find the file specified</failure></testcase></testsuite></testsuites>
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="10" failures="0" skipped="0" tests="10" time="4.173" timestamp="2026-01-07T03:10:21.867921-08:00" hostname="aiden"><testcase classname="" name="src.hackingBuddyGPT.usecases.web_api_testing.testing.test_handler" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:687: in _import_module_using_spec
+    parent_module = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:687: in _import_module_using_spec
+    parent_module = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:687: in _import_module_using_spec
+    parent_module = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap_external&gt;:999: in exec_module
+    ???
+&lt;frozen importlib._bootstrap&gt;:488: in _call_with_frames_removed
+    ???
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\__init__.py:4: in &lt;module&gt;
+    from .web_api_testing import *
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:8: in &lt;module&gt;
+    from hackingBuddyGPT.utils.prompt_generation.information import PromptStrategy
+projects\hackingBuddyGPT\src\hackingBuddyGPT\utils\prompt_generation\__init__.py:1: in &lt;module&gt;
+    from .prompt_engineer import PromptEngineer
+projects\hackingBuddyGPT\src\hackingBuddyGPT\utils\prompt_generation\prompt_engineer.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.utils.prompt_generation.prompts.task_planning import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\utils\prompt_generation\prompts\task_planning\__init__.py:3: in &lt;module&gt;
+    from .tree_of_thought_prompt import TreeOfThoughtPrompt
+projects\hackingBuddyGPT\src\hackingBuddyGPT\utils\prompt_generation\prompts\task_planning\tree_of_thought_prompt.py:11: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils.custom_datatypes import Prompt
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_llm_handler" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_llm_handler.py:4: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_openAPI_specification_manager" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_openAPI_specification_manager.py:5: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_pentesting_information" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_pentesting_information.py:7: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils.configuration_handler import ConfigurationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_prompt_engineer_documentation" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_prompt_engineer_documentation.py:16: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils.configuration_handler import ConfigurationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_prompt_engineer_testing" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_prompt_engineer_testing.py:16: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils.configuration_handler import ConfigurationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_response_analyzer_with_llm" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_response_analyzer_with_llm.py:4: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import ResponseAnalyzerWithLLM
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_response_handler" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_response_handler.py:7: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_handler import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_web_api_documentation" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_web_api_documentation.py:6: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.simple_openapi_documentation import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase><testcase classname="" name="tests.test_web_api_testing" time="0.000"><error message="collection failure">venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\python.py:507: in importtestmodule
+    mod = import_path(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:549: in import_path
+    mod = _import_module_using_spec(
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\pathlib.py:725: in _import_module_using_spec
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venvs\venv_hackingBuddyGPT\Lib\site-packages\_pytest\assertion\rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+projects\hackingBuddyGPT\tests\test_web_api_testing.py:4: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.simple_web_api_testing import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\__init__.py:1: in &lt;module&gt;
+    from .simple_openapi_documentation import SimpleWebAPIDocumentation
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\simple_openapi_documentation.py:12: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.documentation.openapi_specification_handler import \
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\__init__.py:1: in &lt;module&gt;
+    from .openapi_specification_handler import OpenAPISpecificationHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\documentation\openapi_specification_handler.py:9: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\__init__.py:2: in &lt;module&gt;
+    from .response_handler import ResponseHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_handler.py:19: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.response_processing.response_analyzer_with_llm import (
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\response_processing\response_analyzer_with_llm.py:13: in &lt;module&gt;
+    from hackingBuddyGPT.usecases.web_api_testing.utils import LLMHandler
+projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\__init__.py:2: in &lt;module&gt;
+    from .llm_handler import LLMHandler
+E     File "d:\MPCO-dupe\pipeline\profiler\projects\hackingBuddyGPT\src\hackingBuddyGPT\usecases\web_api_testing\utils\llm_handler.py", line 114
+E       num_prompts = 10 if self.adjusting_counter == 2 else (
+E                                                            ^
+E   SyntaxError: '(' was never closed</error></testcase></testsuite></testsuites>

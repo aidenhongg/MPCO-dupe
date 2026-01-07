@@ -25,12 +25,11 @@ def optimize_projects():
     mpo4 = OpenMP()
     optims = (AnthroOptimizer(), OpenOptimizer(), GeminiOptimizer(),)
 
-    for proj_name in list(PROJECTS):
-        # split this for python / cpp
-        # pick out bottlenecks
-        fix_venv(proj_name) # possible refactor into main in root
-        
-        og_failure_count, _, _ = get_pyprofile(proj_name, 0)
+    for proj_name in list(PROJECTS):        
+        get_pyprofile(proj_name, 0)
+        og_failure_count, _, _ = get_pyprofile(proj_name, 0) 
+        # running twice may be necessary as some test suites need initialization run
+
         if og_failure_count is None:
             print(f"Test suite on {proj_name} errors - skipping")
             continue
@@ -123,6 +122,7 @@ def optimize_projects():
             print(f"Done with {optim.name} - moving to next optimizer...")
         print(f"Optimization complete for project {proj_name}")
     return
+
 def _optimize_snippet(objective : str, task : str, 
                       project : PyProj, optim : AnthroOptimizer | OpenOptimizer | GeminiOptimizer, 
                       prompt : str, patches : list, 
@@ -147,8 +147,8 @@ def _optimize_snippet(objective : str, task : str,
         if patch.apply_patch():
             # run tests to get runtimes in this scope
             new_failure_count, _, profile = get_pyprofile(proj_name, project.revisions + 1, testing_patch = True)
-            
-            if not new_failure_count or new_failure_count > og_failure_count:
+
+            if (new_failure_count is None) or (new_failure_count > og_failure_count):
                 print("============FAULTY CODE============")
                 print(f"filename : {code_object['rel_path']}, startline : {code_object['start_line']}")
                 print(new_snippet) 
@@ -161,7 +161,7 @@ def _optimize_snippet(objective : str, task : str,
                 
                 if failed_optims == 9:
                     raise OptimizationError(code_object, optim.name)
-                if project.revisions == 0 and metaprompter: # only regenerate prompt if the very first revision fails
+                if metaprompter: # only regenerate prompt if the very first revision fails
                     print("Regenerating prompt...")
                     prompt = metaprompter.get_prompt(objective, proj_name, task, optim.name) 
                     print("GENERATED META PROMPT: \n" + prompt)
@@ -212,4 +212,3 @@ def _assemble_results(all_snippets : list,
                          'original_runtime' : original_runtime})            
 
     return pd.DataFrame(rows)
-

@@ -1,8 +1,12 @@
 from pipeline.pipeline import optimize_projects
 from graphing import *
+from constants import *
+
+from pathlib import Path
 
 import pandas as pd
 import sys
+
 
 class Teer:
     def __init__(self, file_path):
@@ -44,6 +48,10 @@ def main():
     finally:
         sys.stdout = old_stdout
         teer.close()
+
+        for profile in Path('./pipeline/profiler/profiles/').iterdir():
+            profile.unlink() # cleanup
+
         graph_main(dataset_file)
             
 if __name__ == "__main__":

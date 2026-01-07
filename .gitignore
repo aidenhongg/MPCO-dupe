@@ -5,5 +5,7 @@ __pycache__/
 *.py[cod]
 **/venv/
 **/.pytest_cache/
+**/venvs/
+**/projects/
 
 pipeline/profiler/projects/

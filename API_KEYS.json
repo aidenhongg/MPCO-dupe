@@ -1,5 +1,6 @@
 {
     "GEMINI_KEY" : "",
     "OPENAI_KEY" : "",
-    "ANTHROPIC_KEY" : ""
+    "ANTHROPIC_KEY" : "",
+    "GITHUB_KEY" : ""
 }

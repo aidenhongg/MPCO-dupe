@@ -11,6 +11,8 @@ class MyPatch:
         self.root = Path(root)
         self.patch = None
 
+        self.empty = False
+
     def _make_patch(self):
         file_path = self.code_object['rel_path']
 
@@ -43,6 +45,14 @@ class MyPatch:
     def apply_patch(self) -> bool:
         if self.patch is None:
             self._make_patch()
+
+        if not self.patch or self.patch.strip() == '':
+            print(f"WARNING: Empty patch generated!")
+            print(f"  start_line: {self.code_object['start_line']}")
+            print(f"  end_line: {self.code_object['end_line']}")
+            print(f"  optimized_code length: {len(self.optimized_code)}")
+            self.empty = True
+            return True
         
         with tempfile.NamedTemporaryFile(mode='w', suffix='.patch', delete=False, encoding='utf-8', newline='\n') as patch_file:
             patch_file.write(self.patch)
@@ -61,6 +71,9 @@ class MyPatch:
         return True
     
     def revert_patch(self):
+        if self.empty:
+            return
+
         reversion = subprocess.run(['git', 'apply', '--whitespace=nowarn', '--reverse', self.patch_path],
                                     capture_output=True,
                                     cwd=self.root)

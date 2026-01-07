@@ -21,7 +21,6 @@ def plot_data(data: pd.DataFrame):
     plt.title('Average % Optimization by Prompt Type')
     plt.xticks(rotation=0)
     plt.tight_layout()
-    plt.show()
     plt.savefig('./graphing/graphs/avg_runtime_v_prompt.png')
 
 
@@ -42,7 +41,6 @@ def plot_avg_runtime_by_optimizer(data: pd.DataFrame):
     plt.title('Average % Optimization by Optimizer')
     plt.xticks(rotation=0)
     plt.tight_layout()
-    plt.show()
     plt.savefig('./graphing/graphs/avg_runtime_v_optim.png')
 
 def plot_clustered_bar(data: pd.DataFrame):
@@ -73,7 +71,6 @@ def plot_clustered_bar(data: pd.DataFrame):
     plt.xticks(rotation=0)
     plt.legend(title='Optimizer')
     plt.tight_layout()
-    plt.show()
     plt.savefig('./graphing/graphs/avg_runtime_v_prompt_optim.png')
 
 # New functions for failed_attempts
@@ -94,7 +91,6 @@ def plot_failed_attempts_by_prompt_type(data: pd.DataFrame):
     plt.title('Total Failed Attempts by Prompt Type')
     plt.xticks(rotation=0)
     plt.tight_layout()
-    plt.show()
     plt.savefig('./graphing/graphs/failed_attempts_v_prompt.png')
 
 
@@ -114,7 +110,6 @@ def plot_failed_attempts_by_optimizer(data: pd.DataFrame):
     plt.title('Total Failed Attempts by Optimizer')
     plt.xticks(rotation=0)
     plt.tight_layout()
-    plt.show()
     plt.savefig('./graphing/graphs/failed_attempts_v_optim.png')
 
 
@@ -143,7 +138,6 @@ def plot_failed_attempts_clustered_bar(data: pd.DataFrame):
     plt.xticks(rotation=0)
     plt.legend(title='Optimizer')
     plt.tight_layout()
-    plt.show()
     plt.savefig('./graphing/graphs/failed_attempts_v_prompt_optim.png')
 
 def graph_main(dataset_file):

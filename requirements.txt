@@ -1,0 +1,11 @@
+tomlkit
+pathlib
+reporoulette
+pygithub
+xml
+stat
+pandas
+matplotlib
+google
+openai
+anthropic

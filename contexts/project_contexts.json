@@ -1,27 +1,22 @@
 {
-    "bitmappp": {
-        "name": "BitmapPlusPlus",
-        "description": "Simple and Fast single header Bitmap (BMP) C++ library",
-        "languages": "C++, CMake"
+    "hackingBuddyGPT": {
+        "name": "hackingBuddyGPT",
+        "description": "Helping Ethical Hackers use LLMs in 50 Lines of Code or less..",
+        "languages": "Python, Shell, JavaScript, CSS, HTML, Dockerfile"
     },
-    "llama": {
-        "name": "llama.cpp",
-        "description": "LLM inference in C/C++",
-        "languages": "C++, C, Python, Cuda, HTML, Metal, Svelte, TypeScript, Shell, GLSL, Jinja, CMake, WGSL, JavaScript, CSS, Objective-C, Dockerfile, Nix, MDX, Makefile, Batchfile, SCSS"
+    "canopen": {
+        "name": "canopen",
+        "description": "CANopen for Python",
+        "languages": "Python, Shell"
     },
-    "rpcs3": {
-        "name": "rpcs3",
-        "description": "PlayStation 3 emulator and debugger",
-        "languages": "C++, C, GLSL, CMake, Shell, Python, Batchfile, Objective-C++, GDB"
-    },
-    "whisper": {
-        "name": "whisper",
-        "description": "Robust Speech Recognition via Large-Scale Weak Supervision",
+    "poc-realtime-ai-assistant": {
+        "name": "poc-realtime-ai-assistant",
+        "description": "Sharing early versions of Ada, a personal AI Assistant built on OpenAIs Realtime API",
         "languages": "Python"
     },
-    "langflow": {
-        "name": "langflow",
-        "description": "Langflow is a powerful tool for building and deploying AI-powered agents and workflows.",
-        "languages": "Python, TypeScript, JavaScript, CSS, Makefile, Dockerfile, Shell, PowerShell, Batchfile, HTML, Mako"
+    "python-package-template": {
+        "name": "python-package-template",
+        "description": "A template repo for Python packages",
+        "languages": "Python, Shell, Makefile"
     }
 }

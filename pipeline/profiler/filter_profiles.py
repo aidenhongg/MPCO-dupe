@@ -6,38 +6,18 @@ import subprocess
 import json
 import platform
 
-
 PROFILER_DIR = Path(__file__).parent
-
-if platform.system() == "Windows":
-    VENV_PYTHON = PROFILER_DIR / "venv" / "Scripts" / "python.exe"
-else:
-    VENV_PYTHON = PROFILER_DIR / "venv" / "bin" / "python"
-
-
-def fix_venv(proj_name : str):
-    if not VENV_PYTHON.exists():
-        print(f"Error: Virtual environment not found at {VENV_PYTHON}")
-        sys.exit(1)
-
-    print(f"Reinitializing {proj_name} at correct path...")
-    proj_path = PROFILER_DIR / "projects" / proj_name
-
-    install_result = subprocess.run(
-        [str(VENV_PYTHON), "-m", "pip", "install", "-e", str(proj_path)],
-        cwd=PROFILER_DIR,
-        capture_output=True)
-    
-    if install_result.returncode != 0:
-        print(f"Failed to install {proj_name}")
-        sys.exit(1)
-
 
 # fixing venv should be refactored into different func
 def get_pyprofile(proj_name : str, revision_no = 0, testing_patch = False) -> float:
+    if platform.system() == "Windows":
+        venv_python = PROFILER_DIR / "venvs" / f'venv_{proj_name}' / "Scripts" / "python.exe"
+    else:
+        venv_python = PROFILER_DIR / "venvs" / f'venv_{proj_name}' / "bin" / "python"
+
     output_file = PROFILER_DIR / "profiles" / f"{proj_name}_profile{revision_no}.speedscope"
 
-    test_path = PROFILER_DIR / "projects" / proj_name / "tests"
+    repo_path = PROFILER_DIR / "projects" / proj_name 
     report_file = PROFILER_DIR / "temp" / "report.xml"
     
     # run py-spy with pytest
@@ -49,8 +29,8 @@ def get_pyprofile(proj_name : str, revision_no = 0, testing_patch = False) -> fl
                                             "-o", str(output_file),
                                             "--subprocesses",
                                             "--",
-                                            str(VENV_PYTHON), "-m", "pytest", 
-                                            str(test_path), f"--tb={"short" if testing_patch else "no"}", 
+                                            str(venv_python), "-m", "pytest", 
+                                            str(repo_path), f"--tb={"short" if testing_patch else "no"}", 
                                             f"--junit-xml={report_file}"],
                                             capture_output=testing_patch,
                                             cwd=PROFILER_DIR)

@@ -1,8 +1,7 @@
 import json
 from textwrap3 import dedent
 
-# Projects, tasks, and models allowed
-PROJECTS : set = {'whisper'}
+# tasks, and models allowed
 TASKS : set = {'runtime'}
 MODELS : set = {'25', '4o', '40'}
 
@@ -18,7 +17,6 @@ files = {
     'model_contexts' : "./contexts/model_contexts.json",
     'project_contexts' : "./contexts/project_contexts.json",
     'task_contexts' : "./contexts/task_contexts.json"
-    ""
 }
 
 # API keys
@@ -31,6 +29,7 @@ PROJECT_CONTEXTS : dict = load_json(files['project_contexts'])
 MODEL_CONTEXTS : dict = load_json(files['model_contexts'])
 TASK_CONTEXTS : dict = load_json(files['task_contexts'])
 
+PROJECTS = set(PROJECT_CONTEXTS.keys())
 OBJECTIVE : str = load_json('./contexts/objective.json', 'objective')
 
 del files
