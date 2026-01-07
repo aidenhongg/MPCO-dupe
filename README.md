@@ -5,12 +5,13 @@ To use:
 
 1. Put API keys for Claude, Gemini, and OpenAI in `API_KEYS.json`
 
-2. Install necessary project files, environments, & libraries
+2. Install necessary project files, environments, & libraries with setup.py
 
 ```
-pip install -r requirements.txt
-chmod +x setup.sh
-./setup.sh
+Usage: script.py [OPTIONS]
+
+Options:
+  -s INTEGER  Sample n random Python projects from Github (otherwise use repos in GH_REPOS.json)
 ```
 
 3. Run
